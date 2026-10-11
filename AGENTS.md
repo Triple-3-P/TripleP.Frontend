@@ -55,7 +55,8 @@ src/
 
 ### Naming and module boundaries
 
-- React components: `PascalCase.tsx`; hooks: `useSomething.ts`; functions and slices: descriptive `camelCase` identifiers.
+- Use kebab-case for file and directory names, including React components (`task-card.tsx`), hooks (`use-task-filters.ts`), and other modules (`task-slice.ts`). Preserve filenames required by frameworks or tools, such as `page.tsx`, `layout.tsx`, `AGENTS.md`, and `README.md`.
+- Use PascalCase for React component identifiers and descriptive camelCase for hooks, functions, and slice identifiers. Filename casing does not change code identifier conventions.
 - Use named exports by default; use default exports only when required by Next.js conventions.
 - Co-locate feature tests, validators, selectors, API endpoints and components with their slice.
 - Do not add a generic `utils.ts` or `types.ts` dumping ground for domain code.
