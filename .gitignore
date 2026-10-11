@@ -1,4 +1,6 @@
 # Logs
+next-env.d.ts
+.husky/_/
 logs
 *.log
 npm-debug.log*
