@@ -27,7 +27,18 @@ Husky runs lint-staged before commits. PR CI runs the same application checks. U
 
 - `src/app`: server-rendered routes and layouts.
 - `src/shared`: messages, styles and reusable utilities.
-- Domain slices and Redux store wiring will be added when features need them.
+- `src/store`: Redux store factory, typed client hooks and provider.
+- `src/shared/api`: shared RTK Query API for injected domain endpoints.
+
+## Client state and API data
+
+The root layout mounts `StoreProvider` while remaining a Server Component. Each provider creates its own store with `makeStore`; there is no shared server singleton. Client components can import `useAppDispatch`, `useAppSelector` and `useAppStore` from `@/store`.
+
+The store registers the shared `baseApi` reducer and middleware. Browser focus and reconnect listeners are installed on mount and cleaned up on unmount; endpoints can opt into `refetchOnFocus` and `refetchOnReconnect`.
+
+Domain slices should inject typed endpoints into `baseApi` from `@/shared/api`, adding cache tags with `enhanceEndpoints` as real domains are introduced. Keep fetched data in RTK Query and add regular reducers only for shared client state. Domain code should use its generated query/mutation hooks; Redux hooks live in the store infrastructure and can be used by app composition.
+
+The backend has no API contracts yet. The base query currently accepts relative URLs, but no endpoints are defined and no requests are made. Configure the confirmed backend base URL and authentication centrally in `src/shared/api/base-api.ts` before injecting endpoints. No environment variable or authentication scheme is assumed. Server Component data loading and RTK Query caching remain separate; server hydration is not configured.
 
 Installed feature dependencies include Redux Toolkit/RTK Query, React Redux, React Hook Form, Zod, TanStack Table and dnd-kit. API endpoints must use real backend contracts.
 
