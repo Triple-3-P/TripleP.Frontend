@@ -29,6 +29,19 @@ Husky runs lint-staged before commits. PR CI runs the same application checks. U
 - `src/shared`: messages, styles and reusable utilities.
 - `src/store`: Redux store factory, typed client hooks and provider.
 - `src/shared/api`: shared RTK Query API for injected domain endpoints.
+- `src/widgets/landing-page`: translated landing-page sections and interactive product concept.
+
+## Landing page and translations
+
+The landing page follows a dark editorial layout with a mountain backdrop, workspace concept, benefits, workflow, product direction, principles and FAQs. Links navigate to page sections; board/list buttons, accordions and the mobile menu work without an account. The product concept is explicitly illustrative. Pricing, integration support, user statistics and registration are not asserted or simulated.
+
+UI copy uses `useTranslate` from `@tolgee/react`. The server uses Tolgee's `getTranslate` for page metadata. English and Russian catalogs live in `src/shared/config/i18n/en.json` and `ru.json`; keep their keys aligned. `I18nProvider` creates an instance per mounted provider and supplies SSR data to avoid untranslated first renders. No Tolgee service credentials or external translation requests are required.
+
+The language selector calls a validated Server Action to remember the locale in an HTTP-only cookie for one year. The root layout reads the cookie and sets the document language. English is the default. Cookie-based localization makes the page dynamic; language-specific URLs and search-engine indexing are not configured.
+
+Backend-driven landing content is pending actual API contracts: the fetched backend repository currently contains only a README. Once the backend specifies the relevant sections and response shapes, inject typed, validated endpoints into the existing RTK Query base API and implement their loading, empty and error states. Do not turn translation catalogs or the workspace concept into a stand-in for backend data.
+
+The decorative image is served locally as an optimized WebP. Its generation prompt and provenance are recorded in [public/images/README.md](public/images/README.md).
 
 ## Client state and API data
 
