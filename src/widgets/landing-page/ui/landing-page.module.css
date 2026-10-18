@@ -173,7 +173,7 @@
 }
 .languageSelect .languageTrigger {
   min-height: 34px;
-  max-width: 108px;
+  max-width: 128px;
   border: 1px solid var(--border);
   border-radius: 3px;
   background: var(--surface);
@@ -1433,7 +1433,7 @@
     grid-row: 1;
   }
   .languageSelect .languageTrigger {
-    max-width: 92px;
+    max-width: 112px;
   }
   .accountArea {
     grid-column: 1 / -1;

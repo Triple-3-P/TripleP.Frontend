@@ -124,7 +124,6 @@ export function LandingHeader({
         </nav>
         <div className={styles.headerActions}>
           <div className={styles.languageSelect}>
-            <Globe2 size={14} aria-hidden="true" />
             <Select
               value={locale}
               onValueChange={selectLanguage}
@@ -138,6 +137,7 @@ export function LandingHeader({
                 aria-busy={isPending}
                 size="sm"
               >
+                <Globe2 size={14} aria-hidden="true" />
                 <SelectValue />
               </SelectTrigger>
               <SelectContent
