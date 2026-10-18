@@ -11,10 +11,8 @@ import {
   Compass,
   Focus,
   FolderKanban,
-  Globe2,
   Layers3,
   ListTodo,
-  Menu,
   Plus,
   ScanEye,
   Shapes,
@@ -22,31 +20,17 @@ import {
   UsersRound,
 } from 'lucide-react';
 import Image from 'next/image';
+import type { ReactNode } from 'react';
 
 import type { Locale } from '@/shared/config/i18n';
 import { Button } from '@/shared/ui/button';
 
 import styles from './landing-page.module.css';
+import { Brand, LandingHeader } from './landing-header';
 import { ProductPreview } from './product-preview';
 
-const navigation = ['benefits', 'workflow', 'features', 'faq'];
 const pillarIcons = [Focus, Layers3, UsersRound, ArrowUpRight];
 const principleIcons = [ScanEye, Shapes, UsersRound, Compass];
-
-function Brand({ small = false }: { small?: boolean }) {
-  return (
-    <span className={small ? styles.brandSmall : styles.brand}>
-      <span className={styles.brandMark} aria-hidden="true">
-        <i />
-        <i />
-        <i />
-      </span>
-      <span>
-        triplep<span className={styles.brandPeriod}>.</span>
-      </span>
-    </span>
-  );
-}
 
 function SectionHeading({
   section,
@@ -69,9 +53,11 @@ function SectionHeading({
 export function LandingPage({
   locale,
   changeLocale,
+  account,
 }: {
   locale: Locale;
   changeLocale: (value: string) => Promise<void>;
+  account: ReactNode;
 }) {
   const { t } = useTranslate();
 
@@ -80,48 +66,11 @@ export function LandingPage({
       <a className={styles.skipLink} href="#main">
         {t('navigation.skip')}
       </a>
-      <header className={styles.header}>
-        <a href="#top" aria-label="TripleP">
-          <Brand small />
-        </a>
-        <nav className={styles.desktopNav} aria-label={t('navigation.label')}>
-          {navigation.map((section) => (
-            <a key={section} href={`#${section}`}>
-              {t(`navigation.${section}`)}
-            </a>
-          ))}
-        </nav>
-        <div className={styles.headerActions}>
-          <form action={changeLocale.bind(null, locale === 'en' ? 'ru' : 'en')}>
-            <button
-              className={styles.languageButton}
-              type="submit"
-              aria-label={`${t('language.label')}: ${locale === 'en' ? t('language.russian') : t('language.english')}`}
-            >
-              <Globe2 size={14} />
-              <span>{locale === 'en' ? 'RU' : 'EN'}</span>
-            </button>
-          </form>
-          <Button asChild className={styles.headerCta}>
-            <a href="#workflow">
-              {t('navigation.explore')}
-              <ArrowUpRight size={13} />
-            </a>
-          </Button>
-          <details className={styles.mobileNav}>
-            <summary aria-label={t('navigation.menu')}>
-              <Menu size={20} />
-            </summary>
-            <nav aria-label={t('navigation.label')}>
-              {navigation.map((section) => (
-                <a key={section} href={`#${section}`}>
-                  {t(`navigation.${section}`)}
-                </a>
-              ))}
-            </nav>
-          </details>
-        </div>
-      </header>
+      <LandingHeader
+        locale={locale}
+        changeLocale={changeLocale}
+        account={account}
+      />
       <main id="main">
         <section className={styles.hero} aria-labelledby="hero-title">
           <div className={styles.heroCopy}>

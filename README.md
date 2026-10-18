@@ -37,9 +37,15 @@ The landing page follows a dark editorial layout with a mountain backdrop, works
 
 UI copy uses `useTranslate` from `@tolgee/react`. The server uses Tolgee's `getTranslate` for page metadata. English and Russian catalogs live in `src/shared/config/i18n/en.json` and `ru.json`; keep their keys aligned. `I18nProvider` creates an instance per mounted provider and supplies SSR data to avoid untranslated first renders. No Tolgee service credentials or external translation requests are required.
 
-The language selector calls a validated Server Action to remember the locale in an HTTP-only cookie for one year. The root layout reads the cookie and sets the document language. English is the default. Cookie-based localization makes the page dynamic; language-specific URLs and search-engine indexing are not configured.
+The native language select calls a validated Server Action to remember the locale in an HTTP-only cookie for one year. It is disabled while saving and reports a failed change without discarding the current language. The root layout reads the cookie and sets the document language. English is the default. Cookie-based localization makes the page dynamic; language-specific URLs and search-engine indexing are not configured.
 
-Backend-driven landing content is pending actual API contracts: the fetched backend repository currently contains only a README. Once the backend specifies the relevant sections and response shapes, inject typed, validated endpoints into the existing RTK Query base API and implement their loading, empty and error states. Do not turn translation catalogs or the workspace concept into a stand-in for backend data.
+All landing content, including navigation, marketing copy, FAQs and the workspace concept, comes from local catalogs and components. Only the account area is intended to depend on session/user data. This describes data ownership, not static HTML generation: locale cookies still require request rendering.
+
+The sticky header hides while scrolling down and returns while scrolling up or near the top. Keyboard focus and an open navigation menu keep it visible. The language select and account controls remain available on mobile.
+
+`AccountControls` in `src/features/account-navigation` accepts a presentation model with loading, signed-out and signed-in states. Guests see Sign in and Sign up; signed-in users see a notification control and a profile avatar, with initials on missing or failed images. Unread status is supplied by the caller. App composition supplies this account area separately from landing content.
+
+The fetched backend currently exposes only health functionality; it has no authentication contract. The app therefore supplies the signed-out state. Account destinations must be supplied when real routes are confirmed; missing guest destinations render disabled controls rather than dead links or simulated authentication. Map validated session data to the account model once the contract is available. No account requests or invented authentication routes are added here.
 
 The decorative image is served locally as an optimized WebP. Its generation prompt and provenance are recorded in [public/images/README.md](public/images/README.md).
 

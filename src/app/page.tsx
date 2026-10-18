@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 
+import { AccountControls } from '@/features/account-navigation';
 import { getRequestLocale } from '@/shared/lib/i18n/request-locale';
 import { getTranslate } from '@/shared/lib/i18n/server';
 import { LandingPage } from '@/widgets/landing-page';
@@ -13,5 +14,11 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function HomePage() {
   const locale = await getRequestLocale();
-  return <LandingPage locale={locale} changeLocale={changeLocale} />;
+  return (
+    <LandingPage
+      locale={locale}
+      changeLocale={changeLocale}
+      account={<AccountControls account={{ status: 'signed-out' }} />}
+    />
+  );
 }
