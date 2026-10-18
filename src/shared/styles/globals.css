@@ -23,7 +23,7 @@
   --secondary: var(--muted);
   --secondary-foreground: var(--foreground);
   --destructive: oklch(0.577 0.245 27.325);
-  --radius: 0.625rem;
+  --radius: 0rem;
 }
 
 .dark {
@@ -57,9 +57,14 @@
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-destructive: var(--destructive);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-lg: calc(var(--radius) + 4px);
+  --radius-xs: var(--radius);
+  --radius-sm: var(--radius);
+  --radius-lg: var(--radius);
   --radius-md: var(--radius);
+  --radius-xl: var(--radius);
+  --radius-2xl: var(--radius);
+  --radius-3xl: var(--radius);
+  --radius-4xl: var(--radius);
 }
 
 @layer base {

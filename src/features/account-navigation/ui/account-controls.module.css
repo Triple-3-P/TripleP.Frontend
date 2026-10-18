@@ -35,6 +35,7 @@
 .notificationButton {
   position: relative;
   border-color: transparent;
+  border-radius: var(--radius);
 }
 .notificationButton:hover,
 .avatar:hover {

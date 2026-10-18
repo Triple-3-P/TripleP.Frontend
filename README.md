@@ -47,6 +47,8 @@ Controls and reusable UI use the project-local shadcn components under `src/shar
 
 The FAQ uses one shadcn Accordion with two independent column wrappers. Opening an answer moves only its column; keyboard navigation still traverses all six questions. The columns stack in reading order on smaller screens.
 
+The shared radius scale is zero: buttons, selects, menus, cards, tabs and badges use square corners. Set the radius tokens in `src/shared/styles/globals.css` to adjust this consistently. Avatars and status dots retain their circular shapes.
+
 `AccountControls` in `src/features/account-navigation` accepts a presentation model with loading, signed-out and signed-in states. Guests see Sign in and Sign up; signed-in users see a notification control and a profile avatar, with initials on missing or failed images. Unread status is supplied by the caller. App composition supplies this account area separately from landing content.
 
 The fetched backend currently exposes only health functionality; it has no authentication contract. The app therefore supplies the signed-out state. Account destinations must be supplied when real routes are confirmed; missing guest destinations render disabled controls rather than dead links or simulated authentication. Map validated session data to the account model once the contract is available. No account requests or invented authentication routes are added here.
