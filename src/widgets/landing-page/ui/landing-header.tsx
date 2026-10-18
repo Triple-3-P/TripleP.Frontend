@@ -7,6 +7,20 @@ import type { ReactNode } from 'react';
 
 import { isLocale } from '@/shared/config/i18n';
 import type { Locale } from '@/shared/config/i18n';
+import { Button } from '@/shared/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/shared/ui/dropdown-menu';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/shared/ui/select';
 
 import styles from './landing-page.module.css';
 
@@ -77,6 +91,8 @@ export function LandingHeader({
   const hidden = useHiddenHeader();
   const [isPending, startTransition] = useTransition();
   const [languageError, setLanguageError] = useState(false);
+  const [languageOpen, setLanguageOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   function selectLanguage(value: string) {
     if (!isLocale(value) || value === locale) return;
@@ -91,7 +107,10 @@ export function LandingHeader({
   }
 
   return (
-    <header className={styles.headerShell} data-hidden={hidden}>
+    <header
+      className={styles.headerShell}
+      data-hidden={hidden && !languageOpen && !menuOpen}
+    >
       <div className={styles.header}>
         <a href="#top" aria-label="TripleP">
           <Brand small />
@@ -104,41 +123,67 @@ export function LandingHeader({
           ))}
         </nav>
         <div className={styles.headerActions}>
-          <label className={styles.languageSelect}>
+          <div className={styles.languageSelect}>
             <Globe2 size={14} aria-hidden="true" />
-            <span className="sr-only">{t('language.label')}</span>
-            <select
+            <Select
               value={locale}
-              onChange={(event) => selectLanguage(event.currentTarget.value)}
+              onValueChange={selectLanguage}
               disabled={isPending}
-              aria-busy={isPending}
+              open={languageOpen}
+              onOpenChange={setLanguageOpen}
             >
-              <option value="en" lang="en">
-                {t('language.english')}
-              </option>
-              <option value="ru" lang="ru">
-                {t('language.russian')}
-              </option>
-            </select>
-          </label>
+              <SelectTrigger
+                className={styles.languageTrigger}
+                aria-label={t('language.label')}
+                aria-busy={isPending}
+                size="sm"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent
+                className={styles.controlPopup}
+                position="popper"
+                align="end"
+              >
+                <SelectItem value="en" lang="en">
+                  {t('language.english')}
+                </SelectItem>
+                <SelectItem value="ru" lang="ru">
+                  {t('language.russian')}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           {languageError && (
             <span role="alert" className={styles.languageError}>
               {t('language.error')}
             </span>
           )}
           <div className={styles.accountArea}>{account}</div>
-          <details className={styles.mobileNav}>
-            <summary aria-label={t('navigation.menu')}>
-              <Menu size={20} />
-            </summary>
-            <nav aria-label={t('navigation.label')}>
-              {navigation.map((section) => (
-                <a key={section} href={`#${section}`}>
-                  {t(`navigation.${section}`)}
-                </a>
-              ))}
-            </nav>
-          </details>
+          <div className={styles.mobileNav}>
+            <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label={t('navigation.menu')}
+                >
+                  <Menu size={20} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className={styles.controlPopup}
+                aria-label={t('navigation.label')}
+              >
+                {navigation.map((section) => (
+                  <DropdownMenuItem key={section} asChild>
+                    <a href={`#${section}`}>{t(`navigation.${section}`)}</a>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
     </header>

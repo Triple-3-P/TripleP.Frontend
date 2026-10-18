@@ -6,14 +6,12 @@ import {
   ArrowRight,
   ArrowUpRight,
   Check,
-  ChevronDown,
   CircleCheck,
   Compass,
   Focus,
   FolderKanban,
   Layers3,
   ListTodo,
-  Plus,
   ScanEye,
   Shapes,
   Sparkles,
@@ -24,6 +22,12 @@ import type { ReactNode } from 'react';
 
 import type { Locale } from '@/shared/config/i18n';
 import { Button } from '@/shared/ui/button';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/shared/ui/accordion';
 
 import styles from './landing-page.module.css';
 import { Brand, LandingHeader } from './landing-header';
@@ -135,17 +139,23 @@ export function LandingPage({
         >
           <SectionHeading section="benefits" />
           <div className={styles.benefitGrid}>
-            <div className={styles.benefitList}>
+            <Accordion
+              type="single"
+              defaultValue="benefit-0"
+              collapsible
+              className={styles.benefitList}
+            >
               {[0, 1, 2, 3].map((index) => (
-                <details key={index} name="benefits" open={index === 0}>
-                  <summary>
+                <AccordionItem key={index} value={`benefit-${index}`}>
+                  <AccordionTrigger>
                     {t(`benefits.items.${index}.title`)}
-                    <Plus size={15} />
-                  </summary>
-                  <p>{t(`benefits.items.${index}.description`)}</p>
-                </details>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <p>{t(`benefits.items.${index}.description`)}</p>
+                  </AccordionContent>
+                </AccordionItem>
               ))}
-            </div>
+            </Accordion>
             <div className={styles.focusArtwork}>
               <div className={styles.artworkGrid} />
               <span className={styles.artworkOrb} />
@@ -300,17 +310,18 @@ export function LandingPage({
           aria-labelledby="faq-title"
         >
           <SectionHeading section="faq" />
-          <div className={styles.faqGrid}>
+          <Accordion type="multiple" className={styles.faqGrid}>
             {[0, 1, 2, 3, 4, 5].map((index) => (
-              <details key={index}>
-                <summary>
+              <AccordionItem key={index} value={`faq-${index}`}>
+                <AccordionTrigger>
                   {t(`faq.items.${index}.question`)}
-                  <ChevronDown size={15} />
-                </summary>
-                <p>{t(`faq.items.${index}.answer`)}</p>
-              </details>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <p>{t(`faq.items.${index}.answer`)}</p>
+                </AccordionContent>
+              </AccordionItem>
             ))}
-          </div>
+          </Accordion>
         </section>
         <section className={styles.closing} aria-labelledby="closing-title">
           <div className={styles.closingCopy}>

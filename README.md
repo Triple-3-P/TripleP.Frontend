@@ -37,11 +37,13 @@ The landing page follows a dark editorial layout with a mountain backdrop, works
 
 UI copy uses `useTranslate` from `@tolgee/react`. The server uses Tolgee's `getTranslate` for page metadata. English and Russian catalogs live in `src/shared/config/i18n/en.json` and `ru.json`; keep their keys aligned. `I18nProvider` creates an instance per mounted provider and supplies SSR data to avoid untranslated first renders. No Tolgee service credentials or external translation requests are required.
 
-The native language select calls a validated Server Action to remember the locale in an HTTP-only cookie for one year. It is disabled while saving and reports a failed change without discarding the current language. The root layout reads the cookie and sets the document language. English is the default. Cookie-based localization makes the page dynamic; language-specific URLs and search-engine indexing are not configured.
+The shadcn Select calls a validated Server Action to remember the locale in an HTTP-only cookie for one year. It is disabled while saving and reports a failed change without discarding the current language. The root layout reads the cookie and sets the document language. English is the default. Cookie-based localization makes the page dynamic; language-specific URLs and search-engine indexing are not configured.
 
 All landing content, including navigation, marketing copy, FAQs and the workspace concept, comes from local catalogs and components. Only the account area is intended to depend on session/user data. This describes data ownership, not static HTML generation: locale cookies still require request rendering.
 
 The sticky header hides while scrolling down and returns while scrolling up or near the top. Keyboard focus and an open navigation menu keep it visible. The language select and account controls remain available on mobile.
+
+Interactive controls use the project-local shadcn components under `src/shared/ui`, generated with the configured Radix style. Button covers calls to action and account controls; Select handles languages; Dropdown Menu provides mobile navigation; Accordion handles benefits and FAQs; Tabs switches the workspace concept; Avatar and Skeleton handle account presentation. Use these shared components for future controls. Portalled menus share the landing palette and keep the header visible while open. Keyboard navigation, focus return and dismissal come from the Radix primitives.
 
 `AccountControls` in `src/features/account-navigation` accepts a presentation model with loading, signed-out and signed-in states. Guests see Sign in and Sign up; signed-in users see a notification control and a profile avatar, with initials on missing or failed images. Unread status is supplied by the caller. App composition supplies this account area separately from landing content.
 

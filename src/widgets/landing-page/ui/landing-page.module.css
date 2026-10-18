@@ -1,4 +1,5 @@
-.landing {
+.landing,
+.controlPopup {
   --background: #090c0b;
   --foreground: #e9eeea;
   --primary: #eef2ef;
@@ -15,7 +16,15 @@
   --glow: #a8cdb715;
   --sky: #e9eeea18;
   --line: #e9eeea08;
+  --popover: var(--surface);
+  --popover-foreground: var(--foreground);
+  --accent-foreground: var(--background);
+  --secondary: var(--muted);
+  --secondary-foreground: var(--foreground);
+  --input: var(--border);
   color-scheme: dark;
+}
+.landing {
   min-height: 100svh;
   background: var(--background);
   color: var(--foreground);
@@ -77,7 +86,7 @@
   pointer-events: none;
 }
 .headerShell:focus-within,
-.headerShell:has(details[open]) {
+.headerShell:has([data-state='open']) {
   transform: translateY(0);
   pointer-events: auto;
 }
@@ -160,7 +169,7 @@
   font-size: 10px;
   flex-shrink: 0;
 }
-.languageSelect select {
+.languageSelect .languageTrigger {
   min-height: 34px;
   max-width: 108px;
   border: 1px solid var(--border);
@@ -171,7 +180,7 @@
   font: inherit;
   cursor: pointer;
 }
-.languageSelect select:disabled {
+.languageSelect .languageTrigger:disabled {
   opacity: 0.6;
   cursor: wait;
 }
@@ -195,41 +204,11 @@
 .mobileNav {
   display: none;
 }
+.controlPopup {
+  max-width: calc(100vw - 32px);
+  font-family: Arial, Helvetica, sans-serif;
+}
 
-.landing :global(.landing-button) {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 13px;
-  min-height: 40px;
-  border: 1px solid transparent;
-  border-radius: 3px;
-  padding: 11px 17px;
-  font-family: 'Courier New', monospace;
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1.3;
-  cursor: pointer;
-  transition:
-    background 150ms,
-    border-color 150ms;
-}
-.landing :global(.landing-button-primary) {
-  background: var(--primary);
-  color: var(--primary-foreground);
-}
-.landing :global(.landing-button-primary):hover {
-  background: var(--accent);
-}
-.landing :global(.landing-button-outline) {
-  border-color: var(--border);
-  color: var(--foreground);
-  background: transparent;
-}
-.landing :global(.landing-button-outline):hover {
-  background: var(--muted);
-  border-color: var(--subtle);
-}
 .hero {
   padding-top: 75px;
 }
@@ -391,11 +370,11 @@
   flex-direction: column;
   gap: 6px;
 }
-.benefitList details {
+.benefitList [data-slot='accordion-item'] {
   background: var(--muted);
   border: 1px solid var(--line);
 }
-.benefitList summary {
+.benefitList [data-slot='accordion-trigger'] {
   padding: 19px 22px;
   font-size: 12px;
   cursor: pointer;
@@ -404,18 +383,18 @@
   justify-content: space-between;
   gap: 20px;
 }
-.benefitList summary svg {
+.benefitList [data-slot='accordion-trigger'] svg {
   color: var(--subtle);
   flex-shrink: 0;
   transition: transform 150ms;
 }
-.benefitList details[open] summary svg {
-  transform: rotate(45deg);
-}
-.benefitList details[open] summary {
+.benefitList [data-slot='accordion-trigger'][data-state='open'] {
   color: var(--accent);
 }
-.benefitList details p {
+.benefitList [data-slot='accordion-content'] > div {
+  padding: 0;
+}
+.benefitList p {
   font-size: 11px;
   font-family: 'Courier New', monospace;
   line-height: 1.7;
@@ -749,11 +728,11 @@
   gap: 8px 14px;
   align-items: start;
 }
-.faqGrid details {
+.faqGrid [data-slot='accordion-item'] {
   background: var(--muted);
   border: 1px solid var(--line);
 }
-.faqGrid summary {
+.faqGrid [data-slot='accordion-trigger'] {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -763,13 +742,13 @@
   font-size: 11px;
   line-height: 1.5;
 }
-.faqGrid summary svg {
+.faqGrid [data-slot='accordion-trigger'] svg {
   color: var(--subtle);
   flex-shrink: 0;
   transition: transform 150ms;
 }
-.faqGrid details[open] svg {
-  transform: rotate(180deg);
+.faqGrid [data-slot='accordion-content'] > div {
+  padding: 0;
 }
 .faqGrid p {
   margin: 0;
@@ -778,11 +757,6 @@
   font-size: 11px;
   color: var(--muted-foreground);
   line-height: 1.7;
-}
-.benefitList summary::-webkit-details-marker,
-.faqGrid summary::-webkit-details-marker,
-.mobileNav summary::-webkit-details-marker {
-  display: none;
 }
 
 .closing {
@@ -1047,6 +1021,11 @@
   gap: 15px;
   border-bottom: 1px solid var(--border);
   margin-top: 20px;
+  background: transparent;
+  border-radius: 0;
+  height: auto;
+  padding: 0;
+  justify-content: flex-start;
 }
 .landing :global(.preview-toolbar button) {
   display: flex;
@@ -1060,7 +1039,7 @@
   font-size: 9px;
   cursor: pointer;
 }
-.landing :global(.preview-toolbar button[aria-pressed='true']) {
+.landing :global(.preview-toolbar [data-state='active']) {
   color: var(--foreground);
   border-bottom-color: var(--accent);
 }
@@ -1180,30 +1159,7 @@
   .mobileNav {
     display: block;
   }
-  .mobileNav summary {
-    cursor: pointer;
-    list-style: none;
-    padding: 5px;
-  }
-  .mobileNav nav {
-    position: absolute;
-    top: calc(100% - 8px);
-    right: 0;
-    min-width: 180px;
-    padding: 12px;
-    background: var(--muted);
-    border: 1px solid var(--border);
-    box-shadow: 0 10px 25px var(--shadow);
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-  .mobileNav a {
-    padding: 12px;
-    font-size: 12px;
-    color: var(--foreground);
-  }
+
   .desktopNav {
     gap: 17px;
   }
@@ -1267,30 +1223,7 @@
   .mobileNav {
     display: block;
   }
-  .mobileNav summary {
-    cursor: pointer;
-    list-style: none;
-    padding: 5px;
-  }
-  .mobileNav nav {
-    position: absolute;
-    top: calc(100% - 8px);
-    right: 0;
-    min-width: 180px;
-    padding: 12px;
-    background: var(--muted);
-    border: 1px solid var(--border);
-    box-shadow: 0 10px 25px var(--shadow);
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-  .mobileNav a {
-    padding: 12px;
-    font-size: 12px;
-    color: var(--foreground);
-  }
+
   .hero {
     padding-top: 48px;
   }
@@ -1451,7 +1384,7 @@
     grid-column: 2;
     grid-row: 1;
   }
-  .languageSelect select {
+  .languageSelect .languageTrigger {
     max-width: 92px;
   }
   .accountArea {
@@ -1478,10 +1411,6 @@
   }
   .heroActions {
     gap: 7px;
-  }
-  .landing :global(.landing-button) {
-    font-size: 10px;
-    padding-inline: 12px;
   }
   .heroScene {
     height: 325px;
@@ -1513,8 +1442,11 @@
 @media (prefers-reduced-motion: reduce) {
   .landing *,
   .landing *::before,
-  .landing *::after {
+  .landing *::after,
+  .controlPopup,
+  .controlPopup * {
     transition: none;
+    animation: none;
     scroll-behavior: auto;
   }
 }

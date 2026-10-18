@@ -16,6 +16,7 @@ import {
 import { useState } from 'react';
 
 import { cn } from '@/shared/lib/cn';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs';
 
 const columns = [
   {
@@ -99,66 +100,67 @@ export function ProductPreview({ compact = false }: { compact?: boolean }) {
             </span>
           </div>
         </div>
-        <div
-          className="preview-toolbar"
-          role="group"
-          aria-label={t('preview.project')}
+        <Tabs
+          value={view}
+          onValueChange={(value) => {
+            if (value === 'board' || value === 'list') setView(value);
+          }}
         >
-          <button
-            type="button"
-            onClick={() => setView('board')}
-            aria-pressed={view === 'board'}
+          <TabsList
+            className="preview-toolbar"
+            aria-label={t('preview.project')}
           >
-            <Columns3 size={13} />
-            {t('preview.board')}
-          </button>
-          <button
-            type="button"
-            onClick={() => setView('list')}
-            aria-pressed={view === 'list'}
+            <TabsTrigger value="board">
+              <Columns3 size={13} />
+              {t('preview.board')}
+            </TabsTrigger>
+            <TabsTrigger value="list">
+              <List size={13} />
+              {t('preview.list')}
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent
+            value={view}
+            className={cn('preview-columns', view === 'list' && 'preview-list')}
           >
-            <List size={13} />
-            {t('preview.list')}
-          </button>
-        </div>
-        <div
-          className={cn('preview-columns', view === 'list' && 'preview-list')}
-        >
-          {columns.map((column) => (
-            <div key={column.id} className="preview-column">
-              <div className="preview-column-title">
-                <span className={cn('column-dot', `column-dot-${column.id}`)} />
-                <span>{t(`preview.${column.id}`)}</span>
-                <span className="column-count">{column.tasks.length}</span>
-                <MoreHorizontal size={14} aria-hidden="true" />
-              </div>
-              {column.tasks.map((task) => (
-                <div className="preview-task" key={task.id}>
-                  <div className="task-category">
-                    {t(`preview.${task.category}`)}
-                  </div>
-                  <div className="task-name">
-                    {column.id === 'done' && (
-                      <Check size={12} aria-hidden="true" />
-                    )}
-                    {t(`preview.${task.id}`)}
-                  </div>
-                  <div className="task-bottom">
-                    <span aria-label={t(`preview.${task.priority}`)}>
-                      {task.priority === 'high' ? (
-                        <ArrowUp size={11} />
-                      ) : (
-                        <Circle size={9} />
-                      )}
-                      {t(`preview.${task.priority}`)}
-                    </span>
-                    <UserRound size={12} aria-hidden="true" />
-                  </div>
+            {columns.map((column) => (
+              <div key={column.id} className="preview-column">
+                <div className="preview-column-title">
+                  <span
+                    className={cn('column-dot', `column-dot-${column.id}`)}
+                  />
+                  <span>{t(`preview.${column.id}`)}</span>
+                  <span className="column-count">{column.tasks.length}</span>
+                  <MoreHorizontal size={14} aria-hidden="true" />
                 </div>
-              ))}
-            </div>
-          ))}
-        </div>
+                {column.tasks.map((task) => (
+                  <div className="preview-task" key={task.id}>
+                    <div className="task-category">
+                      {t(`preview.${task.category}`)}
+                    </div>
+                    <div className="task-name">
+                      {column.id === 'done' && (
+                        <Check size={12} aria-hidden="true" />
+                      )}
+                      {t(`preview.${task.id}`)}
+                    </div>
+                    <div className="task-bottom">
+                      <span aria-label={t(`preview.${task.priority}`)}>
+                        {task.priority === 'high' ? (
+                          <ArrowUp size={11} />
+                        ) : (
+                          <Circle size={9} />
+                        )}
+                        {t(`preview.${task.priority}`)}
+                      </span>
+                      <UserRound size={12} aria-hidden="true" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
