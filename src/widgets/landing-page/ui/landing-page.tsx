@@ -22,6 +22,10 @@ import type { ReactNode } from 'react';
 
 import type { Locale } from '@/shared/config/i18n';
 import { Button } from '@/shared/ui/button';
+import { Badge } from '@/shared/ui/badge';
+import { Card, CardContent } from '@/shared/ui/card';
+import { Avatar, AvatarFallback } from '@/shared/ui/avatar';
+import { Separator } from '@/shared/ui/separator';
 import {
   Accordion,
   AccordionContent,
@@ -159,7 +163,7 @@ export function LandingPage({
             <div className={styles.focusArtwork}>
               <div className={styles.artworkGrid} />
               <span className={styles.artworkOrb} />
-              <div className={styles.focusCard}>
+              <Card className={styles.focusCard}>
                 <span className={styles.eyebrow}>
                   <span />
                   {t('preview.label')}
@@ -192,7 +196,7 @@ export function LandingPage({
                   <i />
                   <i />
                 </div>
-              </div>
+              </Card>
               <span className={styles.artworkCaption}>01 / TRIPLEP</span>
             </div>
           </div>
@@ -224,7 +228,7 @@ export function LandingPage({
           <SectionHeading section="features" />
           <div className={styles.featureGrid}>
             {[0, 1, 2].map((index) => (
-              <article key={index} className={styles.featureCard}>
+              <Card key={index} className={styles.featureCard}>
                 <div className={styles.featureVisual}>
                   <div className={styles.featureVisualTop}>
                     <span />
@@ -252,9 +256,9 @@ export function LandingPage({
                         {t('preview.inProgress')}
                       </span>
                       <strong>{t('features.cards.1.sample')}</strong>
-                      <span className={styles.taskTag}>
+                      <Badge variant="secondary" className={styles.taskTag}>
                         {t('preview.design')}
-                      </span>
+                      </Badge>
                       <div>
                         <span className={styles.taskCheck}>
                           <Check size={10} />
@@ -265,30 +269,28 @@ export function LandingPage({
                   ) : (
                     <div className={styles.peopleVisual}>
                       <div>
-                        <span>
-                          <UsersRound size={26} />
-                        </span>
-                        <span>
-                          <UsersRound size={26} />
-                        </span>
-                        <span>
-                          <UsersRound size={26} />
-                        </span>
+                        {[0, 1, 2].map((person) => (
+                          <Avatar key={person}>
+                            <AvatarFallback>
+                              <UsersRound size={26} />
+                            </AvatarFallback>
+                          </Avatar>
+                        ))}
                       </div>
                       <strong>{t('features.cards.2.sample')}</strong>
                       <span>{t('features.cards.2.detail')}</span>
                     </div>
                   )}
                 </div>
-                <div className={styles.featureCopy}>
+                <CardContent className={styles.featureCopy}>
                   <span className={styles.eyebrow}>
                     <span />
                     {t(`features.cards.${index}.badge`)}
                   </span>
                   <h3>{t(`features.cards.${index}.title`)}</h3>
                   <p>{t(`features.cards.${index}.description`)}</p>
-                </div>
-              </article>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </section>
@@ -296,11 +298,11 @@ export function LandingPage({
           <SectionHeading section="principles" />
           <div className={styles.principleGrid}>
             {principleIcons.map((Icon, index) => (
-              <div key={index}>
+              <Card key={index} className={styles.principleCard}>
                 <Icon size={35} strokeWidth={1} />
                 <h3>{t(`principles.items.${index}.title`)}</h3>
                 <p>{t(`principles.items.${index}.description`)}</p>
-              </div>
+              </Card>
             ))}
           </div>
         </section>
@@ -311,15 +313,22 @@ export function LandingPage({
         >
           <SectionHeading section="faq" />
           <Accordion type="multiple" className={styles.faqGrid}>
-            {[0, 1, 2, 3, 4, 5].map((index) => (
-              <AccordionItem key={index} value={`faq-${index}`}>
-                <AccordionTrigger>
-                  {t(`faq.items.${index}.question`)}
-                </AccordionTrigger>
-                <AccordionContent>
-                  <p>{t(`faq.items.${index}.answer`)}</p>
-                </AccordionContent>
-              </AccordionItem>
+            {[
+              [0, 1, 2],
+              [3, 4, 5],
+            ].map((questions, column) => (
+              <div className={styles.faqColumn} key={column}>
+                {questions.map((index) => (
+                  <AccordionItem key={index} value={`faq-${index}`}>
+                    <AccordionTrigger>
+                      {t(`faq.items.${index}.question`)}
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <p>{t(`faq.items.${index}.answer`)}</p>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </div>
             ))}
           </Accordion>
         </section>
@@ -374,6 +383,7 @@ export function LandingPage({
             <span>{t('footer.concept')}</span>
           </div>
         </div>
+        <Separator className={styles.footerDivider} />
         <div className={styles.footerBottom}>
           <span>© {t('footer.copyright')}</span>
           <a href="#top">

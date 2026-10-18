@@ -17,6 +17,16 @@ import { useState } from 'react';
 
 import { cn } from '@/shared/lib/cn';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs';
+import { Card } from '@/shared/ui/card';
+import { Badge } from '@/shared/ui/badge';
+import { Avatar, AvatarFallback } from '@/shared/ui/avatar';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/shared/ui/breadcrumb';
 
 const columns = [
   {
@@ -77,11 +87,21 @@ export function ProductPreview({ compact = false }: { compact?: boolean }) {
       </aside>
       <div className="preview-main">
         <div className="preview-breadcrumb">
-          <FolderKanban size={13} />
-          <span>{t('preview.projects')}</span>
-          <span>/</span>
-          <span>{t('preview.project')}</span>
-          <span className="concept-badge">{t('preview.label')}</span>
+          <Breadcrumb aria-label={t('preview.projects')}>
+            <BreadcrumbList className="preview-breadcrumb-list">
+              <BreadcrumbItem>
+                <FolderKanban size={13} />
+                {t('preview.projects')}
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>{t('preview.project')}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+          <Badge variant="outline" className="concept-badge">
+            {t('preview.label')}
+          </Badge>
         </div>
         <div className="preview-heading">
           <div>
@@ -89,15 +109,13 @@ export function ProductPreview({ compact = false }: { compact?: boolean }) {
             <p>{t('preview.description')}</p>
           </div>
           <div className="preview-avatars" aria-label={t('preview.people')}>
-            <span>
-              <UserRound />
-            </span>
-            <span>
-              <UserRound />
-            </span>
-            <span>
-              <UserRound />
-            </span>
+            {[0, 1, 2].map((person) => (
+              <Avatar key={person}>
+                <AvatarFallback>
+                  <UserRound />
+                </AvatarFallback>
+              </Avatar>
+            ))}
           </div>
         </div>
         <Tabs
@@ -134,10 +152,10 @@ export function ProductPreview({ compact = false }: { compact?: boolean }) {
                   <MoreHorizontal size={14} aria-hidden="true" />
                 </div>
                 {column.tasks.map((task) => (
-                  <div className="preview-task" key={task.id}>
-                    <div className="task-category">
+                  <Card className="preview-task" key={task.id}>
+                    <Badge variant="secondary" className="task-category">
                       {t(`preview.${task.category}`)}
-                    </div>
+                    </Badge>
                     <div className="task-name">
                       {column.id === 'done' && (
                         <Check size={12} aria-hidden="true" />
@@ -155,7 +173,7 @@ export function ProductPreview({ compact = false }: { compact?: boolean }) {
                       </span>
                       <UserRound size={12} aria-hidden="true" />
                     </div>
-                  </div>
+                  </Card>
                 ))}
               </div>
             ))}
