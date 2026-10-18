@@ -62,10 +62,12 @@ export function LandingPage({
   locale,
   changeLocale,
   account,
+  heroAccount,
 }: {
   locale: Locale;
   changeLocale: (value: string) => Promise<void>;
   account: ReactNode;
+  heroAccount: ReactNode;
 }) {
   const { t } = useTranslate();
 
@@ -88,19 +90,16 @@ export function LandingPage({
             </span>
             <h1 id="hero-title">{t('hero.title')}</h1>
             <p className={styles.heroDescription}>{t('hero.description')}</p>
-            <div className={styles.heroActions}>
-              <Button asChild>
-                <a href="#workflow">
-                  {t('hero.action')}
-                  <ArrowRight size={15} />
-                </a>
-              </Button>
-              <Button asChild variant="outline">
-                <a href="#benefits">
-                  {t('hero.secondary')}
-                  <ArrowDown size={14} />
-                </a>
-              </Button>
+            {heroAccount}
+            <div className={styles.heroExplore}>
+              <a href="#workflow">
+                {t('hero.action')}
+                <ArrowRight size={15} />
+              </a>
+              <a href="#benefits">
+                {t('hero.secondary')}
+                <ArrowDown size={14} />
+              </a>
             </div>
             <p className={styles.heroNote}>
               <span />

@@ -19,6 +19,9 @@ export default async function HomePage() {
       locale={locale}
       changeLocale={changeLocale}
       account={<AccountControls account={{ status: 'signed-out' }} />}
+      heroAccount={
+        <AccountControls account={{ status: 'signed-out' }} placement="hero" />
+      }
     />
   );
 }

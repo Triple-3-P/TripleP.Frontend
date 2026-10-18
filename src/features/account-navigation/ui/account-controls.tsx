@@ -8,6 +8,7 @@ import { useId } from 'react';
 import { Button } from '@/shared/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/avatar';
 import { Skeleton } from '@/shared/ui/skeleton';
+import { cn } from '@/shared/lib/cn';
 
 import type { AccountNavigation } from '../model/account-navigation';
 import styles from './account-controls.module.css';
@@ -53,9 +54,17 @@ function AccountLink({
   );
 }
 
-export function AccountControls({ account }: { account: AccountNavigation }) {
+export function AccountControls({
+  account,
+  placement = 'header',
+}: {
+  account: AccountNavigation;
+  placement?: 'header' | 'hero';
+}) {
   const { t } = useTranslate();
   const unavailableId = useId();
+
+  if (placement === 'hero' && account.status !== 'signed-out') return null;
 
   if (account.status === 'loading') {
     return (
@@ -68,26 +77,32 @@ export function AccountControls({ account }: { account: AccountNavigation }) {
   }
 
   if (account.status === 'signed-out') {
+    const actions = [
+      { key: 'signIn', href: account.signInHref, primary: false },
+      { key: 'signUp', href: account.signUpHref, primary: true },
+    ];
+    if (placement === 'hero') actions.reverse();
     return (
       <div
-        className={styles.controls}
+        className={cn(
+          styles.controls,
+          placement === 'hero' && styles.heroControls,
+        )}
         aria-label={t('account.label')}
         role="group"
       >
         <span className="sr-only" id={unavailableId}>
           {t('account.unavailable')}
         </span>
-        <AccountLink
-          href={account.signInHref}
-          label={t('account.signIn')}
-          unavailableId={unavailableId}
-        />
-        <AccountLink
-          href={account.signUpHref}
-          label={t('account.signUp')}
-          primary
-          unavailableId={unavailableId}
-        />
+        {actions.map((action) => (
+          <AccountLink
+            key={action.key}
+            href={action.href}
+            label={t(`account.${action.key}`)}
+            primary={action.primary}
+            unavailableId={unavailableId}
+          />
+        ))}
       </div>
     );
   }

@@ -250,11 +250,22 @@
   line-height: 1.7;
   color: var(--muted-foreground);
 }
-.heroActions {
+.heroExplore {
   display: flex;
   flex-wrap: wrap;
   gap: 9px;
-  margin-top: 24px;
+  margin-top: 16px;
+}
+.heroExplore a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  padding-block: 4px;
+}
+.heroExplore a:hover {
+  color: var(--foreground);
 }
 .heroNote {
   display: flex;
@@ -1457,7 +1468,7 @@
   .hero h1 {
     font-size: 34px;
   }
-  .heroActions {
+  .heroExplore {
     gap: 7px;
   }
   .heroScene {

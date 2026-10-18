@@ -15,6 +15,21 @@
   border-color: transparent;
   background: transparent;
 }
+.controls.heroControls {
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+.controls.heroControls :is(a, button).signIn,
+.controls.heroControls :is(a, button).signUp {
+  min-height: 40px;
+  height: auto;
+  padding: 10px 18px;
+  font-size: 14px;
+}
+.controls.heroControls :is(a, button).signIn {
+  border-color: var(--border);
+}
 .notificationButton,
 .profileButton,
 .avatar {
