@@ -59,6 +59,7 @@ src/
 - Use PascalCase for React component identifiers and descriptive camelCase for hooks, functions, and slice identifiers. Filename casing does not change code identifier conventions.
 - Use named exports by default; use default exports only when required by Next.js conventions.
 - Co-locate feature tests, validators, selectors, API endpoints and components with their slice.
+- Keep loading skeleton components in separate co-located files (for example, `account-controls-skeleton.tsx`); render them from the owning component instead of inlining skeleton markup.
 - Do not add a generic `utils.ts` or `types.ts` dumping ground for domain code.
 - Prefer `@/` aliases for cross-slice imports and relative paths within a slice.
 

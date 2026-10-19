@@ -2,7 +2,7 @@
 
 import { useTranslate } from '@tolgee/react';
 import { Globe2, Menu } from 'lucide-react';
-import { useEffect, useState, useTransition } from 'react';
+import { useLayoutEffect, useState, useTransition } from 'react';
 import type { ReactNode } from 'react';
 
 import { isLocale } from '@/shared/config/i18n';
@@ -23,28 +23,14 @@ import {
 } from '@/shared/ui/select';
 
 import styles from './landing-page.module.css';
+import { Brand } from './landing-brand';
 
-const navigation = ['benefits', 'workflow', 'features', 'faq'];
-
-export function Brand({ small = false }: { small?: boolean }) {
-  return (
-    <span className={small ? styles.brandSmall : styles.brand}>
-      <span className={styles.brandMark} aria-hidden="true">
-        <i />
-        <i />
-        <i />
-      </span>
-      <span>
-        triplep<span className={styles.brandPeriod}>.</span>
-      </span>
-    </span>
-  );
-}
+const navigation = ['benefits', 'workflow', 'features', 'faq'] as const;
 
 function useHiddenHeader() {
   const [hidden, setHidden] = useState(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     let previousY = Math.max(0, window.scrollY);
     let directionStart = previousY;
     let previousDirection = 0;

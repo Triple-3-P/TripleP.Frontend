@@ -50,7 +50,9 @@ const columns = [
       { id: 'taskSix', category: 'research', priority: 'normal' },
     ],
   },
-];
+] as const;
+
+const peopleIndexes = [0, 1, 2] as const;
 
 export function ProductPreview({ compact = false }: { compact?: boolean }) {
   const { t } = useTranslate();
@@ -109,7 +111,7 @@ export function ProductPreview({ compact = false }: { compact?: boolean }) {
             <p>{t('preview.description')}</p>
           </div>
           <div className="preview-avatars" aria-label={t('preview.people')}>
-            {[0, 1, 2].map((person) => (
+            {peopleIndexes.map((person) => (
               <Avatar key={person}>
                 <AvatarFallback>
                   <UserRound />

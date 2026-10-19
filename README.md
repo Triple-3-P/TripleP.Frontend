@@ -55,7 +55,7 @@ The hero repeats the guest account controls with Sign up as the primary action a
 
 The fetched backend currently exposes only health functionality; it has no authentication contract. The app therefore supplies the signed-out state. Account destinations must be supplied when real routes are confirmed; missing guest destinations render disabled controls rather than dead links or simulated authentication. Map validated session data to the account model once the contract is available. No account requests or invented authentication routes are added here.
 
-The decorative image is served locally as an optimized WebP. Its generation prompt and provenance are recorded in [public/images/README.md](public/images/README.md).
+The decorative image is served locally as an optimized WebP.
 
 ## Client state and API data
 

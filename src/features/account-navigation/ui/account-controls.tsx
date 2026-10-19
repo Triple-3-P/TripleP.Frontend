@@ -1,13 +1,13 @@
 'use client';
 
 import { useTranslate } from '@tolgee/react';
-import { Bell, UserRound } from 'lucide-react';
+import { Bell } from 'lucide-react';
 import Link from 'next/link';
 import { useId } from 'react';
 
 import { Button } from '@/shared/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/avatar';
-import { Skeleton } from '@/shared/ui/skeleton';
+import { UserAvatar } from '@/shared/ui/user-avatar';
+import { AccountControlsSkeleton } from './account-controls-skeleton';
 import { cn } from '@/shared/lib/cn';
 
 import type { AccountNavigation } from '../model/account-navigation';
@@ -54,6 +54,11 @@ function AccountLink({
   );
 }
 
+const accountActions = {
+  header: ['signIn', 'signUp'],
+  hero: ['signUp', 'signIn'],
+} as const;
+
 export function AccountControls({
   account,
   placement = 'header',
@@ -67,21 +72,10 @@ export function AccountControls({
   if (placement === 'hero' && account.status !== 'signed-out') return null;
 
   if (account.status === 'loading') {
-    return (
-      <div className={styles.controls} role="status">
-        <Skeleton className={styles.placeholder} aria-hidden="true" />
-        <Skeleton className={styles.placeholder} aria-hidden="true" />
-        <span className="sr-only">{t('account.loading')}</span>
-      </div>
-    );
+    return <AccountControlsSkeleton />;
   }
 
   if (account.status === 'signed-out') {
-    const actions = [
-      { key: 'signIn', href: account.signInHref, primary: false },
-      { key: 'signUp', href: account.signUpHref, primary: true },
-    ];
-    if (placement === 'hero') actions.reverse();
     return (
       <div
         className={cn(
@@ -94,26 +88,18 @@ export function AccountControls({
         <span className="sr-only" id={unavailableId}>
           {t('account.unavailable')}
         </span>
-        {actions.map((action) => (
+        {accountActions[placement].map((action) => (
           <AccountLink
-            key={action.key}
-            href={action.href}
-            label={t(`account.${action.key}`)}
-            primary={action.primary}
+            key={action}
+            href={action === 'signIn' ? account.signInHref : account.signUpHref}
+            label={t(`account.${action}`)}
+            primary={action === 'signUp'}
             unavailableId={unavailableId}
           />
         ))}
       </div>
     );
   }
-
-  const initials = account.displayName
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((part) => part.charAt(0))
-    .join('')
-    .toLocaleUpperCase();
 
   return (
     <div
@@ -151,14 +137,11 @@ export function AccountControls({
           href={account.profileHref}
           aria-label={t('account.profile', { name: account.displayName })}
         >
-          <Avatar className={styles.avatar}>
-            {account.avatarUrl && (
-              <AvatarImage src={account.avatarUrl} alt="" />
-            )}
-            <AvatarFallback>
-              {initials || <UserRound size={18} aria-hidden="true" />}
-            </AvatarFallback>
-          </Avatar>
+          <UserAvatar
+            displayName={account.displayName}
+            imageUrl={account.avatarUrl}
+            className={styles.avatar}
+          />
         </Link>
       </Button>
     </div>
