@@ -22,7 +22,7 @@ This project is a Jira/ClickUp-like task manager. Build maintainable, accessible
 - shadcn/ui (Radix primitives) and Tailwind CSS v4 with semantic CSS variables. CSS Modules are allowed for complex isolated styling; do not add runtime CSS-in-JS by default.
 - React Hook Form + Zod for forms and boundary validation.
 - TanStack Table for advanced task tables; dnd-kit for drag-and-drop.
-- Unit, integration and E2E test infrastructure is deferred; do not introduce it during initialization.
+- Use Playwright for browser E2E tests and Vitest with React Testing Library for unit and component tests.
 - ESLint flat config, Prettier, npm, Husky, lint-staged.
 
 ## 2. Architecture and dependency direction
@@ -132,10 +132,12 @@ src/
 
 ## 9. Testing policy
 
-- Unit, integration and E2E tests are deferred for now.
-- Do not add test frameworks, mock services or placeholder tests during initialization.
-- Validate changes through formatting, linting, type checking, production builds and relevant manual checks once the application is configured.
-- The requested PR check list includes `npm run test`, but its implementation is pending the introduction of tests. Do not fake a passing test script or claim tests ran.
+- Use Playwright for browser E2E tests in e2e/pages/**/*.spec.ts, split by page.
+- Keep reusable UI interactions in e2e/shared and lifecycle/test-data setup in e2e/fixtures.
+- Use Vitest for unit and component tests, co-located as src/**/*.test.ts or *.test.tsx.
+- Consult [.agents/skills/frontend-testing/SKILL.md](.agents/skills/frontend-testing/SKILL.md) for test work.
+- This setup includes no product tests. CI explicitly skips empty suites; test commands must fail on empty suites. Do not add placeholder tests or enable pass-with-no-tests.
+- Run relevant tests and all required application checks. Use actual backend contracts; do not add mock services.
 
 ## 10. Performance and security
 
@@ -168,7 +170,7 @@ Required application scripts:
 ```
 
 - Before merging, CI must install dependencies with `npm ci` and pass `npm run lint`, `npm run typecheck`, `npm run format:check` and `npm run build`.
-- `npm run test` is also requested as a PR check, but is deferred until test infrastructure exists. Report this pending requirement explicitly; never use a no-op success script.
+- CI runs npm test and Chromium npm run test:e2e when matching files exist. Empty suites are explicitly skipped and must not be reported as passed tests.
 - Husky + lint-staged must run ESLint and Prettier on staged TS/TSX files when application tooling is initialized. Hooks do not replace full CI.
 - Never claim checks passed unless actually executed. State which checks could not run.
 - All applicable pipelines for the latest PR revision must pass, with no open or unresolved review threads before merge.
@@ -189,6 +191,6 @@ A change is complete only when:
 3. Domain/API contracts are typed and external inputs are validated where needed.
 4. Loading, empty, success and error paths are addressed.
 5. Keyboard accessibility and responsive behavior are considered.
-6. Relevant manual verification is performed; automated tests remain deferred under the current testing policy.
-7. Lint, typecheck, format check and build pass when configured; unavailable checks and the deferred test requirement are disclosed.
+6. Relevant manual verification and automated tests are performed when coverage exists; absent coverage is disclosed.
+7. Lint, typecheck, format check and build pass when configured; unavailable checks and absent test coverage are disclosed.
 8. The final response lists touched areas, behavioral changes, checks performed and remaining risks.

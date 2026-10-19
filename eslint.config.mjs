@@ -10,7 +10,7 @@ export default defineConfig([
   ...nextTs,
   ...tseslint.configs.recommendedTypeChecked,
   {
-    files: ['**/*.{ts,tsx}'],
+    files: ['**/*.{ts,tsx,mts}'],
     languageOptions: {
       parserOptions: {
         projectService: true,
@@ -102,6 +102,9 @@ export default defineConfig([
     'build/**',
     'coverage/**',
     'playwright-report/**',
+    'test-results/**',
+    'blob-report/**',
+    'playwright/.auth/**',
     'next-env.d.ts',
   ]),
 ]);

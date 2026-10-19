@@ -23,3 +23,21 @@ jobs:
       - run: npm run typecheck
       - run: npm run format:check
       - run: npm run build
+      - name: Vitest
+        if: hashFiles('src/**/*.test.ts', 'src/**/*.test.tsx') != ''
+        run: npm test
+      - name: Install Chromium
+        if: hashFiles('e2e/pages/**/*.spec.ts') != ''
+        run: npx playwright install --with-deps chromium
+      - name: Playwright
+        if: hashFiles('e2e/pages/**/*.spec.ts') != ''
+        run: npm run test:e2e
+      - name: Upload Playwright results
+        if: ${{ !cancelled() && hashFiles('e2e/pages/**/*.spec.ts') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
