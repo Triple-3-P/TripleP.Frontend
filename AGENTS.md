@@ -59,6 +59,7 @@ src/
 - Use PascalCase for React component identifiers and descriptive camelCase for hooks, functions, and slice identifiers. Filename casing does not change code identifier conventions.
 - Use named exports by default; use default exports only when required by Next.js conventions.
 - Co-locate feature tests, validators, selectors, API endpoints and components with their slice.
+- Keep loading skeleton components in separate co-located files (for example, `account-controls-skeleton.tsx`); render them from the owning component instead of inlining skeleton markup.
 - Do not add a generic `utils.ts` or `types.ts` dumping ground for domain code.
 - Prefer `@/` aliases for cross-slice imports and relative paths within a slice.
 
@@ -194,3 +195,13 @@ A change is complete only when:
 6. Relevant manual verification and automated tests are performed when coverage exists; absent coverage is disclosed.
 7. Lint, typecheck, format check and build pass when configured; unavailable checks and absent test coverage are disclosed.
 8. The final response lists touched areas, behavioral changes, checks performed and remaining risks.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+## This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
