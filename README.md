@@ -75,7 +75,7 @@ Work on `FE-Domain-Feature-Implement` or `FE-Domain-Fix` branches; `main` receiv
 
 ## Testing
 
-This setup contains no product tests. Both runners fail when no matching tests exist. CI explicitly skips empty suites and automatically runs each suite once matching files are committed.
+Vitest covers `withProps` rendering, state preservation, refs, composition and fixed-prop behavior. Compile-time cases in `src/shared/utils/with-props.type-test.tsx` are checked by `npm run typecheck`, including expected errors for invalid props. Browser test coverage is not yet committed. Both runners fail when no matching tests exist; CI explicitly skips empty suites.
 
 ```sh
 npm test                         # Vitest, single run

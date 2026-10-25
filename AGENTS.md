@@ -78,6 +78,7 @@ src/
 - Treat URL search params as the source of truth for shareable task filters, sorting, pagination and active views.
 - Avoid unnecessary `useEffect`; derive state and use event handlers when possible.
 - Avoid `useMemo`/`useCallback` without a concrete reason or profiling evidence.
+- Use `withProps` from `@/shared/utils/with-props` for reusable components with fixed static props. Declare the resulting component at module scope, outside all React components. Never call `withProps` during rendering or inside a component, hook, or render callback: creating a new component identity causes remounts and resets state. Pass dynamic values through the remaining props. Preset props are fixed and cannot be overridden by callers.
 
 ## 4. State management and RTK Query
 
@@ -141,7 +142,7 @@ src/
 - Keep reusable UI interactions in e2e/shared and lifecycle/test-data setup in e2e/fixtures.
 - Use Vitest for unit and component tests, co-located as src/**/*.test.ts or *.test.tsx.
 - Consult [.agents/skills/frontend-testing/SKILL.md](.agents/skills/frontend-testing/SKILL.md) for test work.
-- This setup includes no product tests. CI explicitly skips empty suites; test commands must fail on empty suites. Do not add placeholder tests or enable pass-with-no-tests.
+- CI explicitly skips empty suites; test commands must fail on empty suites. Do not add placeholder tests or enable pass-with-no-tests. Compile-time regression cases in `*.type-test.tsx` run through `npm run typecheck`; runtime tests use `*.test.tsx`.
 - Run relevant tests and all required application checks. Use actual backend contracts; do not add mock services.
 
 ## 10. Performance and security

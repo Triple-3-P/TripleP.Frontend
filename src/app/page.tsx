@@ -3,9 +3,18 @@ import type { Metadata } from 'next';
 import { AccountControls } from '@/features/account-navigation';
 import { getRequestLocale } from '@/shared/lib/i18n/request-locale';
 import { getTranslate } from '@/shared/lib/i18n/server';
+import { withProps } from '@/shared/utils/with-props';
 import { LandingPage } from '@/widgets/landing-page';
 
 import { changeLocale } from './actions';
+
+const LandingAccountControls = withProps(AccountControls, {
+  account: { status: 'signed-out' },
+});
+
+const HeroAccountControls = withProps(LandingAccountControls, {
+  placement: 'hero',
+});
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslate();
@@ -18,10 +27,8 @@ export default async function HomePage() {
     <LandingPage
       locale={locale}
       changeLocale={changeLocale}
-      account={<AccountControls account={{ status: 'signed-out' }} />}
-      heroAccount={
-        <AccountControls account={{ status: 'signed-out' }} placement="hero" />
-      }
+      account={<LandingAccountControls />}
+      heroAccount={<HeroAccountControls />}
     />
   );
 }
