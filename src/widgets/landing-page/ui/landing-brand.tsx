@@ -1,6 +1,10 @@
 import styles from './landing-page.module.css';
 
-export function Brand({ small = false }: { small?: boolean }) {
+interface IBrandProps {
+  small?: boolean;
+}
+
+export function Brand({ small = false }: IBrandProps) {
   return (
     <span className={small ? styles.brandSmall : styles.brand}>
       <span className={styles.brandMark} aria-hidden="true">

@@ -6,7 +6,7 @@ import { useLayoutEffect, useState, useTransition } from 'react';
 import type { ReactNode } from 'react';
 
 import { isLocale } from '@/shared/config/i18n';
-import type { Locale } from '@/shared/config/i18n';
+import type { TLocale } from '@/shared/config/i18n';
 import { Button } from '@/shared/ui/button';
 import {
   DropdownMenu,
@@ -64,15 +64,17 @@ function useHiddenHeader() {
   return hidden;
 }
 
+interface ILandingHeaderProps {
+  locale: TLocale;
+  changeLocale: (value: string) => Promise<void>;
+  account: ReactNode;
+}
+
 export function LandingHeader({
   locale,
   changeLocale,
   account,
-}: {
-  locale: Locale;
-  changeLocale: (value: string) => Promise<void>;
-  account: ReactNode;
-}) {
+}: ILandingHeaderProps) {
   const { t } = useTranslate();
   const hidden = useHiddenHeader();
   const [isPending, startTransition] = useTransition();

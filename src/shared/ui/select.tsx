@@ -5,22 +5,34 @@ import { cn } from '@/shared/lib/cn';
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 import { Select as SelectPrimitive } from 'radix-ui';
 
-function Select({
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.Root>) {
+interface ISelectProps extends React.ComponentProps<
+  typeof SelectPrimitive.Root
+> {}
+
+function Select({ ...props }: ISelectProps) {
   return <SelectPrimitive.Root data-slot="select" {...props} />;
 }
 
-function SelectGroup({
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.Group>) {
+interface ISelectGroupProps extends React.ComponentProps<
+  typeof SelectPrimitive.Group
+> {}
+
+function SelectGroup({ ...props }: ISelectGroupProps) {
   return <SelectPrimitive.Group data-slot="select-group" {...props} />;
 }
 
-function SelectValue({
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.Value>) {
+interface ISelectValueProps extends React.ComponentProps<
+  typeof SelectPrimitive.Value
+> {}
+
+function SelectValue({ ...props }: ISelectValueProps) {
   return <SelectPrimitive.Value data-slot="select-value" {...props} />;
+}
+
+interface ISelectTriggerProps extends React.ComponentProps<
+  typeof SelectPrimitive.Trigger
+> {
+  size?: 'sm' | 'default';
 }
 
 function SelectTrigger({
@@ -28,9 +40,7 @@ function SelectTrigger({
   size = 'default',
   children,
   ...props
-}: React.ComponentProps<typeof SelectPrimitive.Trigger> & {
-  size?: 'sm' | 'default';
-}) {
+}: ISelectTriggerProps) {
   return (
     <SelectPrimitive.Trigger
       data-slot="select-trigger"
@@ -49,13 +59,17 @@ function SelectTrigger({
   );
 }
 
+interface ISelectContentProps extends React.ComponentProps<
+  typeof SelectPrimitive.Content
+> {}
+
 function SelectContent({
   className,
   children,
   position = 'item-aligned',
   align = 'center',
   ...props
-}: React.ComponentProps<typeof SelectPrimitive.Content>) {
+}: ISelectContentProps) {
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
@@ -86,10 +100,11 @@ function SelectContent({
   );
 }
 
-function SelectLabel({
-  className,
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.Label>) {
+interface ISelectLabelProps extends React.ComponentProps<
+  typeof SelectPrimitive.Label
+> {}
+
+function SelectLabel({ className, ...props }: ISelectLabelProps) {
   return (
     <SelectPrimitive.Label
       data-slot="select-label"
@@ -99,11 +114,11 @@ function SelectLabel({
   );
 }
 
-function SelectItem({
-  className,
-  children,
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.Item>) {
+interface ISelectItemProps extends React.ComponentProps<
+  typeof SelectPrimitive.Item
+> {}
+
+function SelectItem({ className, children, ...props }: ISelectItemProps) {
   return (
     <SelectPrimitive.Item
       data-slot="select-item"
@@ -126,10 +141,11 @@ function SelectItem({
   );
 }
 
-function SelectSeparator({
-  className,
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.Separator>) {
+interface ISelectSeparatorProps extends React.ComponentProps<
+  typeof SelectPrimitive.Separator
+> {}
+
+function SelectSeparator({ className, ...props }: ISelectSeparatorProps) {
   return (
     <SelectPrimitive.Separator
       data-slot="select-separator"
@@ -139,10 +155,14 @@ function SelectSeparator({
   );
 }
 
+interface ISelectScrollUpButtonProps extends React.ComponentProps<
+  typeof SelectPrimitive.ScrollUpButton
+> {}
+
 function SelectScrollUpButton({
   className,
   ...props
-}: React.ComponentProps<typeof SelectPrimitive.ScrollUpButton>) {
+}: ISelectScrollUpButtonProps) {
   return (
     <SelectPrimitive.ScrollUpButton
       data-slot="select-scroll-up-button"
@@ -157,10 +177,14 @@ function SelectScrollUpButton({
   );
 }
 
+interface ISelectScrollDownButtonProps extends React.ComponentProps<
+  typeof SelectPrimitive.ScrollDownButton
+> {}
+
 function SelectScrollDownButton({
   className,
   ...props
-}: React.ComponentProps<typeof SelectPrimitive.ScrollDownButton>) {
+}: ISelectScrollDownButtonProps) {
   return (
     <SelectPrimitive.ScrollDownButton
       data-slot="select-scroll-down-button"

@@ -54,7 +54,11 @@ const columns = [
 
 const peopleIndexes = [0, 1, 2] as const;
 
-export function ProductPreview({ compact = false }: { compact?: boolean }) {
+interface IProductPreviewProps {
+  compact?: boolean;
+}
+
+export function ProductPreview({ compact = false }: IProductPreviewProps) {
   const { t } = useTranslate();
   const [view, setView] = useState<'board' | 'list'>('board');
 

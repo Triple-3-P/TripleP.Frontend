@@ -10,20 +10,22 @@ import { UserAvatar } from '@/shared/ui/user-avatar';
 import { AccountControlsSkeleton } from './account-controls-skeleton';
 import { cn } from '@/shared/lib/cn';
 
-import type { AccountNavigation } from '../model/account-navigation';
+import type { TAccountNavigation } from '../model/account-navigation';
 import styles from './account-controls.module.css';
+
+interface IAccountLinkProps {
+  href: string | undefined;
+  label: string;
+  primary?: boolean;
+  unavailableId: string;
+}
 
 function AccountLink({
   href,
   label,
   primary = false,
   unavailableId,
-}: {
-  href: string | undefined;
-  label: string;
-  primary?: boolean;
-  unavailableId: string;
-}) {
+}: IAccountLinkProps) {
   const { t } = useTranslate();
   const className = primary ? styles.signUp : styles.signIn;
 
@@ -59,13 +61,15 @@ const accountActions = {
   hero: ['signUp', 'signIn'],
 } as const;
 
+interface IAccountControlsProps {
+  account: TAccountNavigation;
+  placement?: 'header' | 'hero';
+}
+
 export function AccountControls({
   account,
   placement = 'header',
-}: {
-  account: AccountNavigation;
-  placement?: 'header' | 'hero';
-}) {
+}: IAccountControlsProps) {
   const { t } = useTranslate();
   const unavailableId = useId();
 

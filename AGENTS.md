@@ -57,6 +57,10 @@ src/
 
 - Use kebab-case for file and directory names, including React components (`task-card.tsx`), hooks (`use-task-filters.ts`), and other modules (`task-slice.ts`). Preserve filenames required by frameworks or tools, such as `page.tsx`, `layout.tsx`, `AGENTS.md`, and `README.md`.
 - Use PascalCase for React component identifiers and descriptive camelCase for hooks, functions, and slice identifiers. Filename casing does not change code identifier conventions.
+- Prefix project-owned type aliases with `T` (for example, `TUser`) and interfaces with `I` (for example, `IButtonProps`). Keep third-party type names unchanged.
+- Declare every component's props in a separate named declaration, preferably an `I<Component>Props` interface. Use a `T<Component>Props` alias when an interface cannot represent the type, such as a union. Do not inline props annotations in component parameters.
+- Extend shared `IWithClassName` and `IWithChild` interfaces from `@/shared/utils/props` where applicable. `IWithClassName` provides optional `className`; `IWithChild` provides required `children: ReactNode`. Preserve optional children when inheriting native or library component props.
+- Reusable type utilities may live in focused files under `src/shared/utils/`; keep component-specific props beside their component and domain-specific types in their owning slice.
 - Use named exports by default; use default exports only when required by Next.js conventions.
 - Co-locate feature tests, validators, selectors, API endpoints and components with their slice.
 - Keep loading skeleton components in separate co-located files (for example, `account-controls-skeleton.tsx`); render them from the owning component instead of inlining skeleton markup.

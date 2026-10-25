@@ -15,7 +15,11 @@ import styles from './landing-page.module.css';
 
 const pillarIcons = [Focus, Layers3, UsersRound, ArrowUpRight] as const;
 
-export function HeroSection({ heroAccount }: { heroAccount: ReactNode }) {
+interface IHeroSectionProps {
+  heroAccount: ReactNode;
+}
+
+export function HeroSection({ heroAccount }: IHeroSectionProps) {
   const { t } = useTranslate();
   return (
     <section className={styles.hero} aria-labelledby="hero-title">

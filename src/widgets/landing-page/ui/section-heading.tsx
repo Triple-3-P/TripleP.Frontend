@@ -2,11 +2,11 @@
 import { useTranslate } from '@tolgee/react';
 import styles from './landing-page.module.css';
 
-export function SectionHeading({
-  section,
-}: {
+interface ISectionHeadingProps {
   section: 'benefits' | 'workflow' | 'features' | 'principles' | 'faq';
-}) {
+}
+
+export function SectionHeading({ section }: ISectionHeadingProps) {
   const { t } = useTranslate();
   return (
     <div className={styles.sectionHeading}>

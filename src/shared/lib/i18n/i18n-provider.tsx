@@ -2,20 +2,18 @@
 
 import { TolgeeProvider, useTolgeeSSR } from '@tolgee/react';
 import { useState } from 'react';
-import type { ReactNode } from 'react';
+import type { IWithChild } from '@/shared/utils/props';
 
 import { translationCatalogs } from '@/shared/config/i18n';
-import type { Locale } from '@/shared/config/i18n';
+import type { TLocale } from '@/shared/config/i18n';
 
 import { createTolgee } from './tolgee';
 
-export function I18nProvider({
-  children,
-  locale,
-}: {
-  children: ReactNode;
-  locale: Locale;
-}) {
+interface ITranslationProviderProps extends IWithChild {
+  locale: TLocale;
+}
+
+export function I18nProvider({ children, locale }: ITranslationProviderProps) {
   const [tolgee] = useState(() => createTolgee().init({ language: locale }));
   const ssrTolgee = useTolgeeSSR(tolgee, locale, translationCatalogs);
 

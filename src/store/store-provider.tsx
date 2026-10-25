@@ -2,12 +2,14 @@
 
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { useEffect, useState } from 'react';
-import type { ReactNode } from 'react';
+import type { IWithChild } from '@/shared/utils/props';
 import { Provider } from 'react-redux';
 
 import { makeStore } from './store';
 
-export function StoreProvider({ children }: { children: ReactNode }) {
+interface IStoreProviderProps extends IWithChild {}
+
+export function StoreProvider({ children }: IStoreProviderProps) {
   const [store] = useState(makeStore);
 
   useEffect(() => setupListeners(store.dispatch), [store]);

@@ -1,18 +1,20 @@
 'use client';
 import type { ComponentProps } from 'react';
+import type { IWithClassName } from '@/shared/utils/props';
 import { UserRound } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './avatar';
 
-type UserAvatarProps = ComponentProps<typeof Avatar> & {
+interface IUserAvatarProps
+  extends ComponentProps<typeof Avatar>, IWithClassName {
   displayName: string;
   imageUrl?: string | undefined;
-};
+}
 
 export function UserAvatar({
   displayName,
   imageUrl,
   ...props
-}: UserAvatarProps) {
+}: IUserAvatarProps) {
   const initials = displayName
     .trim()
     .split(/\s+/)

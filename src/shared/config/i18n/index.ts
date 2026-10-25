@@ -1,12 +1,12 @@
 import en from './en.json';
 import ru from './ru.json';
 
-export type Locale = 'en' | 'ru';
+export type TLocale = 'en' | 'ru';
 export const translationCatalogs = { en, ru } satisfies Record<
-  Locale,
+  TLocale,
   Record<keyof typeof en, string>
 >;
 
-export function isLocale(value: unknown): value is Locale {
+export function isLocale(value: unknown): value is TLocale {
   return value === 'en' || value === 'ru';
 }

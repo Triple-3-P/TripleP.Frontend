@@ -1,7 +1,9 @@
 import type * as React from 'react';
 import { cn } from '@/shared/lib/cn';
 
-function Skeleton({ className, ...props }: React.ComponentProps<'div'>) {
+interface ISkeletonProps extends React.ComponentProps<'div'> {}
+
+function Skeleton({ className, ...props }: ISkeletonProps) {
   return (
     <div
       data-slot="skeleton"

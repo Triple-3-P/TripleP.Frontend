@@ -1,7 +1,7 @@
 'use client';
 import { useTranslate } from '@tolgee/react';
 import type { ReactNode } from 'react';
-import type { Locale } from '@/shared/config/i18n';
+import type { TLocale } from '@/shared/config/i18n';
 import { LandingHeader } from './landing-header';
 import { HeroSection } from './hero-section';
 import { BenefitsSection } from './benefits-section';
@@ -13,17 +13,19 @@ import { ClosingSection } from './closing-section';
 import { LandingFooter } from './landing-footer';
 import styles from './landing-page.module.css';
 
+interface ILandingPageProps {
+  locale: TLocale;
+  changeLocale: (value: string) => Promise<void>;
+  account: ReactNode;
+  heroAccount: ReactNode;
+}
+
 export function LandingPage({
   locale,
   changeLocale,
   account,
   heroAccount,
-}: {
-  locale: Locale;
-  changeLocale: (value: string) => Promise<void>;
-  account: ReactNode;
-  heroAccount: ReactNode;
-}) {
+}: ILandingPageProps) {
   const { t } = useTranslate();
 
   return (

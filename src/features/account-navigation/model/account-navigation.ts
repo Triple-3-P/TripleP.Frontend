@@ -1,5 +1,5 @@
 // A presentation model; map validated session data into it when auth is available.
-export type AccountNavigation =
+export type TAccountNavigation =
   | { status: 'loading' }
   | { status: 'signed-out'; signInHref?: string; signUpHref?: string }
   | {
