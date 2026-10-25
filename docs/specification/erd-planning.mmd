@@ -1,0 +1,21 @@
+%% Extended planning entity diagram
+erDiagram
+  WORKSPACE ||--o{ TEAM : owns
+  TEAM ||--o{ TEAM_MEMBER : includes
+  TEAM ||--o{ PROJECT_TEAM_GRANT : granted_to
+  PROJECT ||--o{ PROJECT_TEAM_GRANT : has
+  WORKSPACE ||--o{ PORTFOLIO : owns
+  PORTFOLIO ||--o{ PORTFOLIO_PROJECT : groups
+  PROJECT ||--o{ PORTFOLIO_PROJECT : grouped
+  PROJECT ||--o{ SPRINT : plans
+  SPRINT ||--o{ SPRINT_WORK_ITEM : includes
+  WORK_ITEM ||--o{ SPRINT_WORK_ITEM : scheduled
+  PROJECT ||--o{ RELEASE : ships
+  WORK_ITEM ||--o{ WORK_ITEM_RELEASE : included_in
+  RELEASE ||--o{ WORK_ITEM_RELEASE : contains
+  WORK_ITEM ||--o{ WORK_ITEM_RELATION : source
+  WORK_ITEM ||--o{ CUSTOM_FIELD_VALUE : has
+  CUSTOM_FIELD_DEFINITION ||--o{ CUSTOM_FIELD_VALUE : defines
+  WORK_ITEM ||--o{ TIME_ENTRY : logs
+  WORKSPACE ||--o{ AUTOMATION_RULE : defines
+  AUTOMATION_RULE ||--o{ AUTOMATION_RUN : executes
