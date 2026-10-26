@@ -57,8 +57,13 @@ src/
 
 - Use kebab-case for file and directory names, including React components (`task-card.tsx`), hooks (`use-task-filters.ts`), and other modules (`task-slice.ts`). Preserve filenames required by frameworks or tools, such as `page.tsx`, `layout.tsx`, `AGENTS.md`, and `README.md`.
 - Use PascalCase for React component identifiers and descriptive camelCase for hooks, functions, and slice identifiers. Filename casing does not change code identifier conventions.
+- Prefix project-owned type aliases with `T` (for example, `TUser`) and interfaces with `I` (for example, `IButtonProps`). Keep third-party type names unchanged.
+- Declare every component's props in a separate named declaration, preferably an `I<Component>Props` interface. Use a `T<Component>Props` alias when an interface cannot represent the type, such as a union. Do not inline props annotations in component parameters.
+- Extend shared `IWithClassName` and `IWithChild` interfaces from `@/shared/utils/props` where applicable. `IWithClassName` provides optional `className`; `IWithChild` provides required `children: ReactNode`. Preserve optional children when inheriting native or library component props.
+- Reusable type utilities may live in focused files under `src/shared/utils/`; keep component-specific props beside their component and domain-specific types in their owning slice.
 - Use named exports by default; use default exports only when required by Next.js conventions.
 - Co-locate feature tests, validators, selectors, API endpoints and components with their slice.
+- Keep loading skeleton components in separate co-located files (for example, `account-controls-skeleton.tsx`); render them from the owning component instead of inlining skeleton markup.
 - Do not add a generic `utils.ts` or `types.ts` dumping ground for domain code.
 - Prefer `@/` aliases for cross-slice imports and relative paths within a slice.
 
@@ -73,6 +78,7 @@ src/
 - Treat URL search params as the source of truth for shareable task filters, sorting, pagination and active views.
 - Avoid unnecessary `useEffect`; derive state and use event handlers when possible.
 - Avoid `useMemo`/`useCallback` without a concrete reason or profiling evidence.
+- Use `withProps` from `@/shared/utils/with-props` for reusable components with fixed static props. Declare the resulting component at module scope, outside all React components. Never call `withProps` during rendering or inside a component, hook, or render callback: creating a new component identity causes remounts and resets state. Pass dynamic values through the remaining props. Preset props are fixed and cannot be overridden by callers.
 
 ## 4. State management and RTK Query
 
@@ -136,7 +142,7 @@ src/
 - Keep reusable UI interactions in e2e/shared and lifecycle/test-data setup in e2e/fixtures.
 - Use Vitest for unit and component tests, co-located as src/**/*.test.ts or *.test.tsx.
 - Consult [.agents/skills/frontend-testing/SKILL.md](.agents/skills/frontend-testing/SKILL.md) for test work.
-- This setup includes no product tests. CI explicitly skips empty suites; test commands must fail on empty suites. Do not add placeholder tests or enable pass-with-no-tests.
+- CI explicitly skips empty suites; test commands must fail on empty suites. Do not add placeholder tests or enable pass-with-no-tests. Compile-time regression cases in `*.type-test.tsx` run through `npm run typecheck`; runtime tests use `*.test.tsx`.
 - Run relevant tests and all required application checks. Use actual backend contracts; do not add mock services.
 
 ## 10. Performance and security
@@ -194,3 +200,13 @@ A change is complete only when:
 6. Relevant manual verification and automated tests are performed when coverage exists; absent coverage is disclosed.
 7. Lint, typecheck, format check and build pass when configured; unavailable checks and absent test coverage are disclosed.
 8. The final response lists touched areas, behavioral changes, checks performed and remaining risks.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+## This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

@@ -1,12 +1,34 @@
-import { messages } from '@/shared/config/messages';
+import type { Metadata } from 'next';
 
-export default function HomePage() {
+import { AccountControls } from '@/features/account-navigation';
+import { getRequestLocale } from '@/shared/lib/i18n/request-locale';
+import { getTranslate } from '@/shared/lib/i18n/server';
+import { withProps } from '@/shared/utils/with-props';
+import { LandingPage } from '@/widgets/landing-page';
+
+import { changeLocale } from './actions';
+
+const LandingAccountControls = withProps(AccountControls, {
+  account: { status: 'signed-out' },
+});
+
+const HeroAccountControls = withProps(LandingAccountControls, {
+  placement: 'hero',
+});
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslate();
+  return { title: t('metadata.title'), description: t('metadata.description') };
+}
+
+export default async function HomePage() {
+  const locale = await getRequestLocale();
   return (
-    <main className="mx-auto flex min-h-svh max-w-5xl flex-col justify-center gap-4 px-6 py-12">
-      <h1 className="text-4xl font-semibold tracking-tight">
-        {messages.home.title}
-      </h1>
-      <p className="text-muted-foreground">{messages.home.description}</p>
-    </main>
+    <LandingPage
+      locale={locale}
+      changeLocale={changeLocale}
+      account={<LandingAccountControls />}
+      heroAccount={<HeroAccountControls />}
+    />
   );
 }

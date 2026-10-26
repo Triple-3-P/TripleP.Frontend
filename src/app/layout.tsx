@@ -1,17 +1,22 @@
-import type { Metadata } from 'next';
-import type { ReactNode } from 'react';
+import type { IWithChild } from '@/shared/utils/props';
+
+import { I18nProvider } from '@/shared/lib/i18n/i18n-provider';
+import { getRequestLocale } from '@/shared/lib/i18n/request-locale';
+import { StoreProvider } from '@/store';
 
 import '@/shared/styles/globals.css';
 
-export const metadata: Metadata = {
-  title: 'TripleP',
-  description: 'TripleP task manager',
-};
+interface IRootLayoutProps extends IWithChild {}
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: IRootLayoutProps) {
+  const locale = await getRequestLocale();
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang={locale}>
+      <body>
+        <I18nProvider locale={locale}>
+          <StoreProvider>{children}</StoreProvider>
+        </I18nProvider>
+      </body>
     </html>
   );
 }

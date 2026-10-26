@@ -22,6 +22,16 @@ export default defineConfig([
       '@typescript-eslint/no-floating-promises': 'error',
       '@typescript-eslint/no-misused-promises': 'error',
       '@typescript-eslint/consistent-type-imports': 'error',
+      '@typescript-eslint/naming-convention': [
+        'error',
+        { selector: 'typeAlias', format: ['PascalCase'], prefix: ['T'] },
+        { selector: 'interface', format: ['PascalCase'], prefix: ['I'] },
+      ],
+      // Named props interfaces may inherit their complete shape from a base.
+      '@typescript-eslint/no-empty-object-type': [
+        'error',
+        { allowInterfaces: 'with-single-extends' },
+      ],
       '@typescript-eslint/no-unused-vars': [
         'error',
         { argsIgnorePattern: '^_' },
