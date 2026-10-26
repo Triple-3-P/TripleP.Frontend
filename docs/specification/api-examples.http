@@ -1,0 +1,100 @@
+### Task Manager API example requests — documentation only
+### To use in a REST client, set baseUrl, csrfToken, and UUID variables.
+@baseUrl = http://localhost:3000/api/v1
+@wid = 00000000-0000-4000-8000-000000000001
+@pid = 00000000-0000-4000-8000-000000000002
+@iid = 00000000-0000-4000-8000-000000000003
+@statusId = 00000000-0000-4000-8000-000000000004
+@csrfToken = REPLACE_ME
+
+### Current account. Browser session cookie must be supplied by the REST client.
+GET {{baseUrl}}/me
+Accept: application/json
+
+### List workspaces
+GET {{baseUrl}}/workspaces
+Accept: application/json
+
+### Create project
+POST {{baseUrl}}/workspaces/{{wid}}/projects
+Content-Type: application/json
+X-CSRF-Token: {{csrfToken}}
+Idempotency-Key: a1bb2405-ef1b-41cc-94fb-fe8a4bd2d1e3
+
+{
+  "name": "Website",
+  "key": "WEB",
+  "visibility": "private",
+  "template": "kanban"
+}
+
+### View project statuses
+GET {{baseUrl}}/projects/{{pid}}/statuses
+Accept: application/json
+
+### Create item
+POST {{baseUrl}}/projects/{{pid}}/items
+Content-Type: application/json
+X-CSRF-Token: {{csrfToken}}
+Idempotency-Key: 30dbb67d-38b6-410b-b8a5-63a0b33105f1
+
+{
+  "typeKey": "task",
+  "title": "Implement workspace switcher",
+  "priority": "high",
+  "dueDate": "2026-11-02"
+}
+
+### Read canonical item and copy ETag response header for writes
+GET {{baseUrl}}/items/{{iid}}
+Accept: application/json
+
+### Update item; use actual ETag from prior GET
+PATCH {{baseUrl}}/items/{{iid}}
+Content-Type: application/json
+X-CSRF-Token: {{csrfToken}}
+If-Match: "1"
+
+{
+  "title": "Implement workspace switcher + permissions"
+}
+
+### Transition item; use fresh ETag from most recent GET/PATCH
+POST {{baseUrl}}/items/{{iid}}/transitions
+Content-Type: application/json
+X-CSRF-Token: {{csrfToken}}
+Idempotency-Key: 9e8dbabe-e484-45d6-b1a5-3c4ca3130ee6
+If-Match: "2"
+
+{
+  "toStatusId": "{{statusId}}"
+}
+
+### List items with pagination
+GET {{baseUrl}}/projects/{{pid}}/items?limit=50&sort=rank
+Accept: application/json
+
+### Add comment. Actual rich text editor JSON schema to be finalized before implementation.
+POST {{baseUrl}}/items/{{iid}}/comments
+Content-Type: application/json
+X-CSRF-Token: {{csrfToken}}
+Idempotency-Key: 9a6408ee-bbee-4a2b-89cc-b6114de65f02
+
+{
+  "body": { "type": "doc", "content": [
+    { "type": "paragraph", "content": [{ "type": "text", "text": "Please review this change." }] }
+  ] },
+  "mentionedUserIds": []
+}
+
+### Get effective project permissions
+GET {{baseUrl}}/projects/{{pid}}/capabilities
+Accept: application/json
+
+### Mark notifications read (workspace scope)
+POST {{baseUrl}}/me/notifications/read-all
+Content-Type: application/json
+X-CSRF-Token: {{csrfToken}}
+Idempotency-Key: 7a51bfc5-7953-4d2a-8252-0f5411c44bdd
+
+{ "workspaceId": "{{wid}}" }

@@ -1,0 +1,26 @@
+%% Core entity diagram
+erDiagram
+  USER ||--o{ WORKSPACE_MEMBER : joins
+  WORKSPACE ||--o{ WORKSPACE_MEMBER : contains
+  WORKSPACE ||--o{ INVITATION : creates
+  WORKSPACE ||--o{ PROJECT : owns
+  WORKSPACE ||--o{ WORK_ITEM_TYPE : catalog
+  PROJECT ||--o{ PROJECT_MEMBER : grants
+  USER ||--o{ PROJECT_MEMBER : participates
+  PROJECT ||--o{ WORKFLOW_STATUS : defines
+  PROJECT ||--o{ WORK_ITEM : owns
+  PROJECT ||--o{ SAVED_VIEW : displays
+  PROJECT ||--|| WORK_ITEM_COUNTER : counts
+  WORK_ITEM_TYPE ||--o{ WORK_ITEM : classifies
+  WORKFLOW_STATUS ||--o{ WORK_ITEM : describes
+  WORK_ITEM ||--o{ WORK_ITEM : parent_of
+  WORK_ITEM ||--o{ WORK_ITEM : epic_contains
+  WORK_ITEM ||--o{ COMMENT : has
+  WORK_ITEM ||--o{ CHECKLIST : has
+  CHECKLIST ||--o{ CHECKLIST_ITEM : contains
+  WORK_ITEM ||--o{ ATTACHMENT : has
+  WORK_ITEM ||--o{ WORK_ITEM_LABEL : labeled
+  LABEL ||--o{ WORK_ITEM_LABEL : joins
+  WORK_ITEM ||--o{ ACTIVITY_EVENT : audited
+  USER ||--o{ NOTIFICATION : receives
+  WORK_ITEM ||--o{ WORK_ITEM_KEY_ALIAS : aliases

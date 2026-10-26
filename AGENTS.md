@@ -4,6 +4,8 @@
 
 This project is a Jira/ClickUp-like task manager. Build maintainable, accessible, testable features rather than demo-quality prototypes.
 
+Product/domain/API planning is indexed in [docs/specification/README.md](docs/specification/README.md). Consult it for related feature work, including the implementation plan and unresolved decisions. These are proposals; the actual backend contracts and repository instructions govern implementation.
+
 - Follow existing repository conventions and inspect nearby implementations before writing code.
 - Make the smallest coherent change. Do not perform unrelated refactors.
 - Before a substantial change, summarize the approach and affected layers.

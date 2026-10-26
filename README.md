@@ -2,6 +2,10 @@
 
 Next.js App Router frontend for the TripleP task manager. See [AGENTS.md](AGENTS.md) for architecture and contribution rules.
 
+## Product and API planning
+
+The [product specification](docs/specification/README.md) contains the imported product scope, domain rules, permissions, UX flows, draft OpenAPI and frontend/backend integration plan. These documents describe proposed behavior; inspect the actual backend before integrating endpoints. Start with the [implementation plan and open decisions](docs/specification/implementation-plan.md).
+
 ## Getting started
 
 Use Node.js 24 LTS and npm.
