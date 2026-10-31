@@ -82,7 +82,7 @@ export function AuthControls({ placement = 'header' }: IAuthControlsProps) {
       </div>
       <DialogContent
         ref={contentRef}
-        className="flex h-[31rem] max-h-[calc(100dvh-2rem)] min-w-0 flex-col overflow-hidden p-5 sm:max-w-md"
+        className="flex h-[28rem] max-h-[calc(100dvh-2rem)] min-w-0 flex-col overflow-hidden p-5 sm:max-w-md"
         onOpenAutoFocus={(event) => {
           event.preventDefault();
           contentRef.current?.querySelector('input')?.focus();
