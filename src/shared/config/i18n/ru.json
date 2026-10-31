@@ -175,6 +175,10 @@
   "footer.copyright": "TripleP. Создано с вниманием.",
   "footer.back": "Наверх",
   "footer.concept": "В разработке",
-  "auth.google": "????? ????? Google",
-  "auth.or": "???"
+  "auth.google": "Войти через Google",
+  "auth.or": "или",
+  "notifications.label": "Уведомления",
+  "notifications.dismiss": "Закрыть уведомление",
+  "auth.signInFailed": "Не удалось войти",
+  "auth.signUpFailed": "Не удалось создать аккаунт"
 }

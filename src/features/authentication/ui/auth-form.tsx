@@ -4,6 +4,7 @@ import type { ChangeEvent } from 'react';
 import { useTranslate } from '@tolgee/react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'sonner';
 import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
 import { PasswordInput } from '@/shared/ui/password-input';
@@ -94,6 +95,7 @@ export function AuthForm({
           email: values.email,
           password: values.password,
         }).unwrap();
+        toast.success(t('auth.registered'));
         if (mounted.current) onRegistered(values.email);
       } else {
         await signIn({
@@ -106,11 +108,20 @@ export function AuthForm({
             ? { twoFactorRecoveryCode: values.twoFactorRecoveryCode.trim() }
             : {}),
         }).unwrap();
+        toast.success(t('auth.successTitle'));
         if (mounted.current) onSuccess();
       }
     } catch (error: unknown) {
-      if (!mounted.current) return;
       const key = getAuthError(error);
+      if (key === 'auth.error.twoFactor') {
+        toast.info(t(key));
+      } else {
+        toast.error(
+          t(mode === 'signUp' ? 'auth.signUpFailed' : 'auth.signInFailed'),
+          { description: t(key) },
+        );
+      }
+      if (!mounted.current) return;
       if (key === 'auth.error.twoFactor') setTwoFactor(true);
       const field =
         key === 'auth.error.duplicate' || key === 'auth.invalidEmail'
@@ -149,7 +160,9 @@ export function AuthForm({
     <form
       noValidate
       onSubmit={(event) => {
-        void handleSubmit(submit)(event);
+        void handleSubmit(submit, () => {
+          toast.error(t('auth.error.validation'));
+        })(event);
       }}
       aria-busy={isSubmitting}
     >

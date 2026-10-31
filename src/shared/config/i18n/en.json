@@ -176,5 +176,9 @@
   "footer.back": "Back to top",
   "footer.concept": "Currently in development",
   "auth.google": "Sign in with Google",
-  "auth.or": "or"
+  "auth.or": "or",
+  "notifications.label": "Notifications",
+  "notifications.dismiss": "Dismiss notification",
+  "auth.signInFailed": "Could not sign in",
+  "auth.signUpFailed": "Could not create account"
 }

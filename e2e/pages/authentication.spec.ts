@@ -16,6 +16,9 @@ test('sign-in modal supports focus, validation and keyboard dismissal', async ({
   await dialog.getByRole('button', { name: 'Sign in', exact: true }).click();
   await expect(dialog.getByText('Enter a valid email address.')).toBeVisible();
   await expect(dialog.getByText('Enter your password.')).toBeVisible();
+  await expect(
+    page.getByText('Check your details and try again.', { exact: true }),
+  ).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(dialog).toBeHidden();
   await expect(trigger).toBeFocused();

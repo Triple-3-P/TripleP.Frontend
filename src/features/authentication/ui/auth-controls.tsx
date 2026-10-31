@@ -104,10 +104,18 @@ export function AuthControls({ placement = 'header' }: IAuthControlsProps) {
             className="w-[calc(100%-2rem)] shrink-0"
             aria-label={t('account.label')}
           >
-            <TabsTrigger value="signIn" disabled={busy || signedIn}>
+            <TabsTrigger
+              value="signIn"
+              disabled={busy || signedIn}
+              className="data-[state=active]:bg-black data-[state=active]:text-white dark:data-[state=active]:bg-black dark:data-[state=active]:text-white"
+            >
               {t('account.signIn')}
             </TabsTrigger>
-            <TabsTrigger value="signUp" disabled={busy || signedIn}>
+            <TabsTrigger
+              value="signUp"
+              disabled={busy || signedIn}
+              className="data-[state=active]:bg-black data-[state=active]:text-white dark:data-[state=active]:bg-black dark:data-[state=active]:text-white"
+            >
               {t('account.signUp')}
             </TabsTrigger>
           </TabsList>
