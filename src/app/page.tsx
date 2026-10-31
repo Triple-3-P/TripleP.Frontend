@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import { AccountControls } from '@/features/account-navigation';
+import { AuthControls } from '@/features/authentication';
 import { getRequestLocale } from '@/shared/lib/i18n/request-locale';
 import { getTranslate } from '@/shared/lib/i18n/server';
 import { withProps } from '@/shared/utils/with-props';
@@ -8,11 +8,7 @@ import { LandingPage } from '@/widgets/landing-page';
 
 import { changeLocale } from './actions';
 
-const LandingAccountControls = withProps(AccountControls, {
-  account: { status: 'signed-out' },
-});
-
-const HeroAccountControls = withProps(LandingAccountControls, {
+const HeroAccountControls = withProps(AuthControls, {
   placement: 'hero',
 });
 
@@ -27,7 +23,7 @@ export default async function HomePage() {
     <LandingPage
       locale={locale}
       changeLocale={changeLocale}
-      account={<LandingAccountControls />}
+      account={<AuthControls />}
       heroAccount={<HeroAccountControls />}
     />
   );
