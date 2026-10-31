@@ -16,6 +16,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/shared/ui/tabs';
 import { useAccountQuery } from '../api/auth-api';
 import type { TAuthMode } from '../model/auth-validation';
 import { AuthForm } from './auth-form';
+import { AuthControlsSkeleton } from './auth-controls-skeleton';
 import { GoogleSignIn } from './google-sign-in';
 
 interface IAuthControlsProps {
@@ -49,7 +50,9 @@ export function AuthControls({ placement = 'header' }: IAuthControlsProps) {
         aria-label={t('account.label')}
         className="flex items-center gap-2"
       >
-        {account && !open ? (
+        {isLoading && placement === 'header' && !open ? (
+          <AuthControlsSkeleton />
+        ) : account && !open ? (
           <>
             <Button asChild>
               <Link ref={workspaceRef} href="/workspaces">
