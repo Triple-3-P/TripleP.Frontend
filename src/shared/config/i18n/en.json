@@ -3,6 +3,9 @@
   "auth.password": "Password",
   "auth.confirmPassword": "Confirm password",
   "auth.showPassword": "Show password",
+  "auth.hidePassword": "Hide password",
+  "auth.showConfirmPassword": "Show confirmation password",
+  "auth.hideConfirmPassword": "Hide confirmation password",
   "auth.close": "Close",
   "auth.signInDescription": "Welcome back. Sign in to your TripleP account.",
   "auth.signUpDescription": "Create your TripleP account with your email and a password.",
@@ -171,5 +174,7 @@
   "footer.questions": "Questions",
   "footer.copyright": "TripleP. Built with intention.",
   "footer.back": "Back to top",
-  "footer.concept": "Currently in development"
+  "footer.concept": "Currently in development",
+  "auth.google": "Sign in with Google",
+  "auth.or": "or"
 }

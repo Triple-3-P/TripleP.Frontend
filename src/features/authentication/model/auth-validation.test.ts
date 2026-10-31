@@ -85,3 +85,29 @@ describe('authentication validation', () => {
     expect(getAuthError(error)).toBe(expected);
   });
 });
+
+describe('second-factor validation', () => {
+  it('requires the selected second factor through Zod', () => {
+    expect(
+      createAuthSchema('signIn', 'authenticator').safeParse(values).success,
+    ).toBe(false);
+    expect(
+      createAuthSchema('signIn', 'authenticator').safeParse({
+        ...values,
+        twoFactorCode: '123456',
+      }).success,
+    ).toBe(true);
+    expect(
+      createAuthSchema('signIn', 'recovery').safeParse({
+        ...values,
+        twoFactorCode: '123456',
+      }).success,
+    ).toBe(false);
+    expect(
+      createAuthSchema('signIn', 'recovery').safeParse({
+        ...values,
+        twoFactorRecoveryCode: 'recovery-code',
+      }).success,
+    ).toBe(true);
+  });
+});

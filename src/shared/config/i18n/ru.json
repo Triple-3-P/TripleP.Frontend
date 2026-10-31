@@ -3,6 +3,9 @@
   "auth.password": "Пароль",
   "auth.confirmPassword": "Подтвердите пароль",
   "auth.showPassword": "Показать пароль",
+  "auth.hidePassword": "Скрыть пароль",
+  "auth.showConfirmPassword": "Показать подтверждение пароля",
+  "auth.hideConfirmPassword": "Скрыть подтверждение пароля",
   "auth.close": "Закрыть",
   "auth.signInDescription": "С возвращением. Войдите в аккаунт TripleP.",
   "auth.signUpDescription": "Создайте аккаунт TripleP с электронной почтой и паролем.",
@@ -171,5 +174,7 @@
   "footer.questions": "Вопросы",
   "footer.copyright": "TripleP. Создано с вниманием.",
   "footer.back": "Наверх",
-  "footer.concept": "В разработке"
+  "footer.concept": "В разработке",
+  "auth.google": "????? ????? Google",
+  "auth.or": "???"
 }

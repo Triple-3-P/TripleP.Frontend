@@ -2,10 +2,19 @@
 import { useRef, useState } from 'react';
 import { useTranslate } from '@tolgee/react';
 import { Button } from '@/shared/ui/button';
-import { Dialog, DialogContent, DialogTrigger } from '@/shared/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/shared/ui/dialog';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/shared/ui/tabs';
 import { useAccountQuery } from '../api/auth-api';
 import type { TAuthMode } from '../model/auth-validation';
 import { AuthForm } from './auth-form';
+import { GoogleSignIn } from './google-sign-in';
 
 interface IAuthControlsProps {
   placement?: 'header' | 'hero';
@@ -25,6 +34,8 @@ export function AuthControls({ placement = 'header' }: IAuthControlsProps) {
   const [email, setEmail] = useState('');
   const [registered, setRegistered] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const accountRef = useRef<HTMLParagraphElement>(null);
   const actions: TAuthMode[] =
@@ -57,6 +68,7 @@ export function AuthControls({ placement = 'header' }: IAuthControlsProps) {
                   setEmail('');
                   setRegistered(false);
                   setSignedIn(false);
+                  setBusy(false);
                 }}
               >
                 {t('account.' + action)}
@@ -66,32 +78,82 @@ export function AuthControls({ placement = 'header' }: IAuthControlsProps) {
         )}
       </div>
       <DialogContent
+        ref={contentRef}
+        className="flex h-[31rem] max-h-[calc(100dvh-2rem)] min-w-0 flex-col overflow-hidden p-5 sm:max-w-md"
+        onOpenAutoFocus={(event) => {
+          event.preventDefault();
+          contentRef.current?.querySelector('input')?.focus();
+        }}
         onCloseAutoFocus={(event) => {
           event.preventDefault();
           (accountRef.current ?? triggerRef.current)?.focus();
         }}
-        title={t(signedIn ? 'auth.successTitle' : 'account.' + mode)}
-        description={t(
-          signedIn ? 'auth.successDescription' : 'auth.' + mode + 'Description',
-        )}
         closeLabel={t('auth.close')}
       >
-        {signedIn ? (
-          <p role="status">{t('auth.successDescription')}</p>
-        ) : (
-          <AuthForm
-            key={mode}
-            mode={mode}
-            initialEmail={email}
-            registered={registered}
-            onModeChange={(nextMode, nextEmail, wasRegistered) => {
-              setRegistered(wasRegistered ?? false);
-              setMode(nextMode);
-              setEmail(nextEmail ?? '');
-            }}
-            onSuccess={() => setSignedIn(true)}
-          />
-        )}
+        <Tabs
+          value={mode}
+          onValueChange={(value) => {
+            if (busy || signedIn || (value !== 'signIn' && value !== 'signUp'))
+              return;
+            setRegistered(false);
+            setMode(value);
+          }}
+          className="min-h-0 min-w-0 flex-1 gap-4"
+        >
+          <TabsList
+            className="w-[calc(100%-2rem)] shrink-0"
+            aria-label={t('account.label')}
+          >
+            <TabsTrigger value="signIn" disabled={busy || signedIn}>
+              {t('account.signIn')}
+            </TabsTrigger>
+            <TabsTrigger value="signUp" disabled={busy || signedIn}>
+              {t('account.signUp')}
+            </TabsTrigger>
+          </TabsList>
+          <div className="min-h-0 min-w-0 flex-1 space-y-3 overflow-x-hidden overflow-y-auto">
+            <DialogHeader className={signedIn ? undefined : 'sr-only'}>
+              <DialogTitle>
+                {t(signedIn ? 'auth.successTitle' : 'account.' + mode)}
+              </DialogTitle>
+              <DialogDescription>
+                {t(
+                  signedIn
+                    ? 'auth.successDescription'
+                    : 'auth.' + mode + 'Description',
+                )}
+              </DialogDescription>
+            </DialogHeader>
+            {signedIn ? (
+              <p role="status">{t('auth.successDescription')}</p>
+            ) : (
+              (['signIn', 'signUp'] as const).map((tab) => (
+                <TabsContent value={tab} key={tab} className="min-w-0">
+                  {mode === tab && (
+                    <AuthForm
+                      mode={tab}
+                      initialEmail={email}
+                      registered={registered}
+                      onEmailChange={setEmail}
+                      onBusyChange={setBusy}
+                      onRegistered={(registeredEmail) => {
+                        setRegistered(true);
+                        setEmail(registeredEmail);
+                        setBusy(false);
+                        setMode('signIn');
+                      }}
+                      onSuccess={() => {
+                        setBusy(false);
+                        setSignedIn(true);
+                      }}
+                    />
+                  )}
+                </TabsContent>
+              ))
+            )}
+            {!signedIn && <GoogleSignIn />}
+          </div>
+        </Tabs>
       </DialogContent>
     </Dialog>
   );

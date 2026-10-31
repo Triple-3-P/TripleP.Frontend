@@ -1,7 +1,10 @@
 import { z } from 'zod';
 
 export type TAuthMode = 'signIn' | 'signUp';
-export function createAuthSchema(mode: TAuthMode) {
+export function createAuthSchema(
+  mode: TAuthMode,
+  secondFactor?: 'authenticator' | 'recovery',
+) {
   return z
     .object({
       email: z.string().trim().email('auth.invalidEmail'),
@@ -26,7 +29,18 @@ export function createAuthSchema(mode: TAuthMode) {
         message: 'auth.passwordMismatch',
         path: ['confirmPassword'],
       },
-    );
+    )
+    .superRefine((values, context) => {
+      if (mode !== 'signIn' || !secondFactor) return;
+      const field =
+        secondFactor === 'recovery' ? 'twoFactorRecoveryCode' : 'twoFactorCode';
+      if (!values[field].trim())
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [field],
+          message: 'auth.codeRequired',
+        });
+    });
 }
 export type TAuthValues = z.infer<ReturnType<typeof createAuthSchema>>;
 

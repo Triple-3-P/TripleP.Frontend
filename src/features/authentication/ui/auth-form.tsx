@@ -1,10 +1,20 @@
 'use client';
 import { useEffect, useId, useRef, useState } from 'react';
+import type { ChangeEvent } from 'react';
 import { useTranslate } from '@tolgee/react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
+import { PasswordInput } from '@/shared/ui/password-input';
+import {
+  Field,
+  FieldLabel,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldSet,
+} from '@/shared/ui/field';
 import { useSignInMutation, useSignUpMutation } from '../api/auth-api';
 import {
   createAuthSchema,
@@ -15,14 +25,24 @@ import {
 
 interface IAuthFormProps {
   mode: TAuthMode;
-  onModeChange: (mode: TAuthMode, email?: string, registered?: boolean) => void;
+  onRegistered: (email: string) => void;
+  onEmailChange: (email: string) => void;
+  onBusyChange: (busy: boolean) => void;
   onSuccess: () => void;
   initialEmail: string;
   registered: boolean;
 }
+interface IAuthField {
+  name: keyof TAuthValues;
+  label: string;
+  autoComplete: string;
+  password?: boolean;
+}
 export function AuthForm({
   mode,
-  onModeChange,
+  onRegistered,
+  onEmailChange,
+  onBusyChange,
   onSuccess,
   initialEmail,
   registered,
@@ -36,20 +56,27 @@ export function AuthForm({
       mounted.current = false;
     };
   }, []);
-  const [showPassword, setShowPassword] = useState(false);
   const [twoFactor, setTwoFactor] = useState(false);
   const [recovery, setRecovery] = useState(false);
   const [signIn] = useSignInMutation();
   const [signUp] = useSignUpMutation();
   const {
-    register,
+    control,
     handleSubmit,
     setError,
     clearErrors,
-    getValues,
+    trigger,
+    getFieldState,
     formState: { errors, isSubmitting },
   } = useForm<TAuthValues>({
-    resolver: zodResolver(createAuthSchema(mode)),
+    resolver: zodResolver(
+      createAuthSchema(
+        mode,
+        twoFactor ? (recovery ? 'recovery' : 'authenticator') : undefined,
+      ),
+    ),
+    mode: 'onChange',
+    reValidateMode: 'onChange',
     defaultValues: {
       email: initialEmail,
       password: '',
@@ -59,28 +86,16 @@ export function AuthForm({
     },
   });
   async function submit(values: TAuthValues) {
-    clearErrors('root');
+    clearErrors();
+    onBusyChange(true);
     try {
       if (mode === 'signUp') {
         await signUp({
           email: values.email,
           password: values.password,
         }).unwrap();
-        if (mounted.current) onModeChange('signIn', values.email, true);
+        if (mounted.current) onRegistered(values.email);
       } else {
-        if (
-          twoFactor &&
-          !(
-            recovery ? values.twoFactorRecoveryCode : values.twoFactorCode
-          ).trim()
-        ) {
-          setError(
-            recovery ? 'twoFactorRecoveryCode' : 'twoFactorCode',
-            { message: 'auth.codeRequired' },
-            { shouldFocus: true },
-          );
-          return;
-        }
         await signIn({
           email: values.email,
           password: values.password,
@@ -97,143 +112,159 @@ export function AuthForm({
       if (!mounted.current) return;
       const key = getAuthError(error);
       if (key === 'auth.error.twoFactor') setTwoFactor(true);
-      setError('root', { message: key });
+      const field =
+        key === 'auth.error.duplicate' || key === 'auth.invalidEmail'
+          ? 'email'
+          : key === 'auth.passwordRequirements'
+            ? 'password'
+            : 'root';
+      setError(field, { message: key }, { shouldFocus: field !== 'root' });
+    } finally {
+      if (mounted.current) onBusyChange(false);
     }
   }
-  const fields = [
-    {
-      name: 'email',
-      type: 'email',
-      autoComplete: 'email',
-      label: 'auth.email',
-    },
+  const fields: IAuthField[] = [
+    { name: 'email', label: 'auth.email', autoComplete: 'email' },
     {
       name: 'password',
-      type: showPassword ? 'text' : 'password',
-      autoComplete: mode === 'signUp' ? 'new-password' : 'current-password',
       label: 'auth.password',
+      autoComplete: mode === 'signUp' ? 'new-password' : 'current-password',
+      password: true,
     },
-    ...(mode === 'signUp'
-      ? [
-          {
-            name: 'confirmPassword' as const,
-            type: showPassword ? 'text' : 'password',
-            autoComplete: 'new-password',
-            label: 'auth.confirmPassword',
-          },
-        ]
-      : []),
-    ...(twoFactor
-      ? [
-          {
-            name: recovery
-              ? ('twoFactorRecoveryCode' as const)
-              : ('twoFactorCode' as const),
-            type: 'text',
-            autoComplete: 'one-time-code',
-            label: recovery ? 'auth.recoveryCode' : 'auth.twoFactorCode',
-          },
-        ]
-      : []),
-  ] satisfies {
-    name: keyof TAuthValues;
-    type: string;
-    autoComplete: string;
-    label: string;
-  }[];
+  ];
+  if (mode === 'signUp')
+    fields.push({
+      name: 'confirmPassword',
+      label: 'auth.confirmPassword',
+      autoComplete: 'new-password',
+      password: true,
+    });
+  if (twoFactor)
+    fields.push({
+      name: recovery ? 'twoFactorRecoveryCode' : 'twoFactorCode',
+      label: recovery ? 'auth.recoveryCode' : 'auth.twoFactorCode',
+      autoComplete: 'one-time-code',
+    });
   return (
     <form
       noValidate
       onSubmit={(event) => {
         void handleSubmit(submit)(event);
       }}
-      className="space-y-4"
       aria-busy={isSubmitting}
     >
-      {registered && (
-        <p role="status" className="text-sm">
-          {t('auth.registered')}
-        </p>
-      )}
-      <fieldset disabled={isSubmitting} className="space-y-4">
-        {fields.map((field) => (
-          <div key={field.name} className="space-y-2">
-            <label htmlFor={id + field.name} className="text-sm font-medium">
-              {t(field.label)}
-            </label>
-            <Input
-              {...register(field.name)}
-              id={id + field.name}
-              type={field.type}
-              autoComplete={field.autoComplete}
-              required
-              aria-invalid={Boolean(errors[field.name])}
-              aria-describedby={
-                errors[field.name]
-                  ? id + field.name + '-error'
-                  : field.name === 'password' && mode === 'signUp'
-                    ? id + '-hint'
-                    : undefined
-              }
+      <FieldSet disabled={isSubmitting} className="min-w-0 gap-3">
+        {registered && (
+          <p role="status" className="text-sm">
+            {t('auth.registered')}
+          </p>
+        )}
+        <FieldGroup className="min-w-0 gap-3">
+          {fields.map((definition) => (
+            <Controller
+              key={definition.name}
+              name={definition.name}
+              control={control}
+              render={({ field, fieldState }) => {
+                const inputId = id + definition.name;
+                const showHint =
+                  definition.name === 'password' && mode === 'signUp';
+                const describedBy =
+                  [
+                    showHint && !fieldState.invalid && inputId + '-hint',
+                    fieldState.invalid && inputId + '-error',
+                  ]
+                    .filter(Boolean)
+                    .join(' ') || undefined;
+                const inputProps = {
+                  ...field,
+                  id: inputId,
+                  autoComplete: definition.autoComplete,
+                  required: true,
+                  disabled: isSubmitting,
+                  'aria-invalid': fieldState.invalid,
+                  'aria-describedby': describedBy,
+                  onChange: (event: ChangeEvent<HTMLInputElement>) => {
+                    field.onChange(event);
+                    if (definition.name === 'email')
+                      onEmailChange(event.target.value);
+                    if (
+                      definition.name === 'password' &&
+                      mode === 'signUp' &&
+                      getFieldState('confirmPassword').isTouched
+                    ) {
+                      void trigger('confirmPassword');
+                    }
+                  },
+                };
+                return (
+                  <Field
+                    data-invalid={fieldState.invalid}
+                    className="min-w-0 gap-1"
+                  >
+                    <FieldLabel htmlFor={inputId}>
+                      {t(definition.label)}
+                    </FieldLabel>
+                    {definition.password ? (
+                      <PasswordInput
+                        {...inputProps}
+                        showLabel={t(
+                          definition.name === 'confirmPassword'
+                            ? 'auth.showConfirmPassword'
+                            : 'auth.showPassword',
+                        )}
+                        hideLabel={t(
+                          definition.name === 'confirmPassword'
+                            ? 'auth.hideConfirmPassword'
+                            : 'auth.hidePassword',
+                        )}
+                      />
+                    ) : (
+                      <Input
+                        {...inputProps}
+                        type={definition.name === 'email' ? 'email' : 'text'}
+                      />
+                    )}
+                    {showHint && !fieldState.invalid && (
+                      <FieldDescription
+                        className="text-xs"
+                        id={inputId + '-hint'}
+                      >
+                        {t('auth.passwordRequirements')}
+                      </FieldDescription>
+                    )}
+                    {fieldState.error?.message && (
+                      <FieldError
+                        className="text-xs"
+                        id={inputId + '-error'}
+                        errors={[{ message: t(fieldState.error.message) }]}
+                      />
+                    )}
+                  </Field>
+                );
+              }}
             />
-            {errors[field.name]?.message && (
-              <p
-                id={id + field.name + '-error'}
-                role="alert"
-                className="text-sm text-destructive"
-              >
-                {t(errors[field.name]?.message ?? '')}
-              </p>
-            )}
-          </div>
-        ))}
-        {mode === 'signUp' && (
-          <p id={id + '-hint'} className="text-xs text-muted-foreground">
-            {t('auth.passwordRequirements')}
-          </p>
-        )}
-        <label className="flex items-center gap-2 text-sm">
-          <input
-            type="checkbox"
-            checked={showPassword}
-            onChange={(event) => setShowPassword(event.target.checked)}
-          />
-          {t('auth.showPassword')}
-        </label>
-        {twoFactor && (
-          <Button
-            type="button"
-            variant="link"
-            onClick={() => setRecovery(!recovery)}
-          >
-            {t(recovery ? 'auth.useAuthenticator' : 'auth.useRecovery')}
+          ))}
+          {twoFactor && (
+            <Button
+              type="button"
+              variant="link"
+              onClick={() => {
+                setRecovery(!recovery);
+                clearErrors(['twoFactorCode', 'twoFactorRecoveryCode']);
+              }}
+            >
+              {t(recovery ? 'auth.useAuthenticator' : 'auth.useRecovery')}
+            </Button>
+          )}
+          {errors.root?.message && (
+            <FieldError errors={[{ message: t(errors.root.message) }]} />
+          )}
+          <Button type="submit" className="w-full">
+            {t(isSubmitting ? 'auth.submitting' : 'account.' + mode)}
           </Button>
-        )}
-        {errors.root?.message && (
-          <p role="alert" className="text-sm text-destructive">
-            {t(errors.root.message)}
-          </p>
-        )}
-        <Button type="submit" className="w-full">
-          {t(isSubmitting ? 'auth.submitting' : 'account.' + mode)}
-        </Button>
-        <p className="text-center text-sm text-muted-foreground">
-          {t(mode === 'signIn' ? 'auth.noAccount' : 'auth.hasAccount')}{' '}
-          <Button
-            type="button"
-            variant="link"
-            className="h-auto p-0"
-            onClick={() =>
-              onModeChange(
-                mode === 'signIn' ? 'signUp' : 'signIn',
-                getValues('email'),
-              )
-            }
-          >
-            {t(mode === 'signIn' ? 'account.signUp' : 'account.signIn')}
-          </Button>
-        </p>
-      </fieldset>
+        </FieldGroup>
+      </FieldSet>
     </form>
   );
 }
