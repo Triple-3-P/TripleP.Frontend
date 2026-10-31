@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// The unmodified ASP.NET Identity application cookie, verified against the API.
-const identityCookie = '.AspNetCore.Identity.Application';
-const identityCookiePattern =
-  /^\.AspNetCore\.Identity\.Application(?:C[1-9]\d*)?$/;
+import {
+  identityCookie,
+  identityCookiePattern,
+} from '@/shared/api/identity-cookie';
 
 export function POST(request: NextRequest) {
   // Next.js can normalize the URL hostname to localhost in development.

@@ -24,14 +24,10 @@ interface IAuthControlsProps {
 }
 export function AuthControls({ placement = 'header' }: IAuthControlsProps) {
   const { t } = useTranslate();
-  const { currentData, error, isLoading } = useAccountQuery(undefined, {
+  const { currentData: account, isLoading } = useAccountQuery(undefined, {
     refetchOnFocus: true,
     refetchOnReconnect: true,
   });
-  const account =
-    error && 'status' in error && error.status === 401
-      ? undefined
-      : currentData;
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<TAuthMode>('signIn');
   const [email, setEmail] = useState('');

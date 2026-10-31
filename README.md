@@ -81,7 +81,9 @@ The store registers the shared `baseApi` reducer and middleware. Browser focus a
 
 Domain slices should inject typed endpoints into `baseApi` from `@/shared/api`, adding cache tags with `enhanceEndpoints` as real domains are introduced. Keep fetched data in RTK Query and add regular reducers only for shared client state. Domain code should use its generated query/mutation hooks; Redux hooks live in the store infrastructure and can be used by app composition.
 
-The base query uses `/api/` and same-origin cookies. Authentication injects registration, login and account-info endpoints with account cache invalidation after successful login. Server Component data loading and RTK Query caching remain separate; server hydration is not configured.
+The base query uses `/api/` and same-origin cookies. Authentication injects registration, login and account-info endpoints with account cache invalidation after successful login. On the initial request, the root layout fetches account info directly from `BACKEND_URL` on the server, forwarding only the Identity session cookie and its chunks. This request uses `cache: 'no-store'`, rejects redirects and has a 15-second timeout. No session cookie or a backend 401 means a confirmed guest; network, server and schema failures leave the session unknown so the browser can retry.
+
+`StoreProvider` initializes a fresh store with the validated account (or `null` for a guest), synchronously prefilling the RTK Query account cache before rendering children. The same result initializes the browser store, so hydration does not repeat a successful server lookup. Only account data crosses the server/client boundary, never the session cookie. Subsequent login invalidation, logout cache reset and focus/reconnect refetches remain client-owned; later layout renders do not overwrite the live client cache with an older server snapshot.
 
 Installed feature dependencies include Redux Toolkit/RTK Query, React Redux, React Hook Form, Zod, TanStack Table and dnd-kit. API endpoints must use real backend contracts.
 
@@ -91,7 +93,7 @@ Work on `FE-Domain-Feature-Implement` or `FE-Domain-Fix` branches; `main` receiv
 
 ## Testing
 
-Vitest covers `withProps` and authentication validation/error normalization. Compile-time cases in `src/shared/utils/with-props.type-test.tsx` are checked by `npm run typecheck`. Playwright covers modal opening, focus return, validation, password visibility and switching forms without mocked APIs. Successful registration/login and session persistence require separate verification against a running backend; they are not covered by these browser tests. Both runners fail when no matching tests exist; CI explicitly skips empty suites.
+Vitest covers `withProps`, authentication validation/error normalization, logout cookie handling, and account cache initialization/isolation. Compile-time cases in `src/shared/utils/with-props.type-test.tsx` are checked by `npm run typecheck`. Playwright covers modal opening, focus return, validation, password visibility, switching forms, guest rendering without JavaScript and hydration without duplicate account requests, all without mocked APIs. Successful registration/login and authenticated SSR require separate verification against a running backend; they are not covered by these browser tests. Both runners fail when no matching tests exist; CI explicitly skips empty suites.
 
 ```sh
 npm test                         # Vitest, single run
