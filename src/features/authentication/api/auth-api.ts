@@ -35,7 +35,22 @@ export const authApi = baseApi
       signUp: builder.mutation<void, ICredentials>({
         query: (body) => ({ url: 'register', method: 'POST', body }),
       }),
+      signOut: builder.mutation<void, void>({
+        query: () => ({ url: 'session/logout', method: 'POST' }),
+        async onQueryStarted(_argument, { dispatch, queryFulfilled }) {
+          try {
+            await queryFulfilled;
+            dispatch(baseApi.util.resetApiState());
+          } catch {
+            // Preserve the account cache when logout fails; the caller reports the error.
+          }
+        },
+      }),
     }),
   });
-export const { useAccountQuery, useSignInMutation, useSignUpMutation } =
-  authApi;
+export const {
+  useAccountQuery,
+  useSignInMutation,
+  useSignUpMutation,
+  useSignOutMutation,
+} = authApi;

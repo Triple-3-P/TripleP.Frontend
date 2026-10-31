@@ -1,5 +1,7 @@
 'use client';
 import { useRef, useState } from 'react';
+import Link from 'next/link';
+import { AccountPopover } from './account-popover';
 import { useTranslate } from '@tolgee/react';
 import { Button } from '@/shared/ui/button';
 import {
@@ -33,11 +35,11 @@ export function AuthControls({ placement = 'header' }: IAuthControlsProps) {
   const [mode, setMode] = useState<TAuthMode>('signIn');
   const [email, setEmail] = useState('');
   const [registered, setRegistered] = useState(false);
-  const [signedIn, setSignedIn] = useState(false);
   const [busy, setBusy] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const accountRef = useRef<HTMLParagraphElement>(null);
+  const accountRef = useRef<HTMLButtonElement>(null);
+  const workspaceRef = useRef<HTMLAnchorElement>(null);
   const actions: TAuthMode[] =
     placement === 'hero' ? ['signUp', 'signIn'] : ['signIn', 'signUp'];
   return (
@@ -48,14 +50,16 @@ export function AuthControls({ placement = 'header' }: IAuthControlsProps) {
         className="flex items-center gap-2"
       >
         {account && !open ? (
-          <p
-            ref={accountRef}
-            tabIndex={-1}
-            className="max-w-48 truncate text-sm"
-            title={account.email}
-          >
-            {account.email}
-          </p>
+          <>
+            <Button asChild>
+              <Link ref={workspaceRef} href="/workspaces">
+                {t('account.workspaces')}
+              </Link>
+            </Button>
+            {placement === 'header' && (
+              <AccountPopover email={account.email} triggerRef={accountRef} />
+            )}
+          </>
         ) : (
           actions.map((action) => (
             <DialogTrigger asChild key={action}>
@@ -67,7 +71,6 @@ export function AuthControls({ placement = 'header' }: IAuthControlsProps) {
                   setMode(action);
                   setEmail('');
                   setRegistered(false);
-                  setSignedIn(false);
                   setBusy(false);
                 }}
               >
@@ -86,15 +89,18 @@ export function AuthControls({ placement = 'header' }: IAuthControlsProps) {
         }}
         onCloseAutoFocus={(event) => {
           event.preventDefault();
-          (accountRef.current ?? triggerRef.current)?.focus();
+          (
+            accountRef.current ??
+            workspaceRef.current ??
+            triggerRef.current
+          )?.focus();
         }}
         closeLabel={t('auth.close')}
       >
         <Tabs
           value={mode}
           onValueChange={(value) => {
-            if (busy || signedIn || (value !== 'signIn' && value !== 'signUp'))
-              return;
+            if (busy || (value !== 'signIn' && value !== 'signUp')) return;
             setRegistered(false);
             setMode(value);
           }}
@@ -106,60 +112,50 @@ export function AuthControls({ placement = 'header' }: IAuthControlsProps) {
           >
             <TabsTrigger
               value="signIn"
-              disabled={busy || signedIn}
+              disabled={busy}
               className="data-[state=active]:bg-black data-[state=active]:text-white dark:data-[state=active]:bg-black dark:data-[state=active]:text-white"
             >
               {t('account.signIn')}
             </TabsTrigger>
             <TabsTrigger
               value="signUp"
-              disabled={busy || signedIn}
+              disabled={busy}
               className="data-[state=active]:bg-black data-[state=active]:text-white dark:data-[state=active]:bg-black dark:data-[state=active]:text-white"
             >
               {t('account.signUp')}
             </TabsTrigger>
           </TabsList>
           <div className="min-h-0 min-w-0 flex-1 space-y-3 overflow-x-hidden overflow-y-auto">
-            <DialogHeader className={signedIn ? undefined : 'sr-only'}>
-              <DialogTitle>
-                {t(signedIn ? 'auth.successTitle' : 'account.' + mode)}
-              </DialogTitle>
+            <DialogHeader className="sr-only">
+              <DialogTitle>{t('account.' + mode)}</DialogTitle>
               <DialogDescription>
-                {t(
-                  signedIn
-                    ? 'auth.successDescription'
-                    : 'auth.' + mode + 'Description',
-                )}
+                {t('auth.' + mode + 'Description')}
               </DialogDescription>
             </DialogHeader>
-            {signedIn ? (
-              <p role="status">{t('auth.successDescription')}</p>
-            ) : (
-              (['signIn', 'signUp'] as const).map((tab) => (
-                <TabsContent value={tab} key={tab} className="min-w-0">
-                  {mode === tab && (
-                    <AuthForm
-                      mode={tab}
-                      initialEmail={email}
-                      registered={registered}
-                      onEmailChange={setEmail}
-                      onBusyChange={setBusy}
-                      onRegistered={(registeredEmail) => {
-                        setRegistered(true);
-                        setEmail(registeredEmail);
-                        setBusy(false);
-                        setMode('signIn');
-                      }}
-                      onSuccess={() => {
-                        setBusy(false);
-                        setSignedIn(true);
-                      }}
-                    />
-                  )}
-                </TabsContent>
-              ))
-            )}
-            {!signedIn && <GoogleSignIn />}
+            {(['signIn', 'signUp'] as const).map((tab) => (
+              <TabsContent value={tab} key={tab} className="min-w-0">
+                {mode === tab && (
+                  <AuthForm
+                    mode={tab}
+                    initialEmail={email}
+                    registered={registered}
+                    onEmailChange={setEmail}
+                    onBusyChange={setBusy}
+                    onRegistered={(registeredEmail) => {
+                      setRegistered(true);
+                      setEmail(registeredEmail);
+                      setBusy(false);
+                      setMode('signIn');
+                    }}
+                    onSuccess={() => {
+                      setBusy(false);
+                      setOpen(false);
+                    }}
+                  />
+                )}
+              </TabsContent>
+            ))}
+            <GoogleSignIn />
           </div>
         </Tabs>
       </DialogContent>
